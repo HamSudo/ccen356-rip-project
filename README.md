@@ -38,7 +38,7 @@ data/routes.csv     every snapshot, one row per route
 data/debug_logs/    debug captures and their parsed CSVs
 data/monitor_logs/  convergence monitor logs
 data/charts/        charts for the report
-docs/               design doc (Part 1: network design and RIP configuration), final report
+docs/               team plan, Part 1 design doc (network design and RIP configuration), final report
 ```
 
 ## Scripts
@@ -116,3 +116,5 @@ Convergence is measured on one router's clock: from the interface change to the 
 | Mouhamed | Python automation, repository, final report |
 | Zayed | Measurement, testing and visualisation |
 | Abdulrahman | Convergence analysis, RIP limitations, demo |
+
+Who does what, the test plan and the demo run-sheet are in the [team plan](docs/Team-Plan-and-Technical-Guide-v3.pdf).
