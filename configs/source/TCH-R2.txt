@@ -2,6 +2,12 @@
 ! TCH-R2 - Teachers' room router (Cisco 2901 + HWIC-2T module)
 ! CCEN 356 Project 1 - RIPv2 school network
 ! Paste into the CLI starting from Router> or Router#
+!
+! NOTE: this is a paste-in script (what gets typed into a blank device),
+! not an export from the built network. The brief's ".txt exports from
+! routers" are the 'show running-config' output, saved after the build
+! in configs/exports/. Lines starting with '!' are comments, so the whole
+! file can still be pasted into the CLI.
 ! ============================================================
 enable
 configure terminal
