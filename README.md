@@ -22,7 +22,7 @@ graph TD
 | TCH-R2 | 192.168.20.1/24 | S0/0/0 to LIB-R1, S0/0/1 to LAB-R3 (DCE) |
 | LAB-R3 | 192.168.30.1/24 | G0/1 to LIB-R1, S0/0/0 to TCH-R2 |
 
-Each router runs `router rip`, `version 2`, `no auto-summary`, with its LAN passive. Each room has a 2960 switch with PCs, laptops and a printer. Full configs are in [`configs/source/`](configs/source/).
+Each router runs `router rip`, `version 2`, `no auto-summary`, with its LAN passive. Each room has a 2960 switch with PCs, laptops and a printer. Full configs are in [`configs/source/`](configs/source/); the full design (IP plan, cabling, build steps, expected routing tables) is in [`docs/Part1-Network-Design-and-RIP-Configuration.pdf`](docs/Part1-Network-Design-and-RIP-Configuration.pdf).
 
 ## Repository layout
 
@@ -38,7 +38,7 @@ data/routes.csv     every snapshot, one row per route
 data/debug_logs/    debug captures and their parsed CSVs
 data/monitor_logs/  convergence monitor logs
 data/charts/        charts for the report
-docs/               final report
+docs/               design doc (Part 1: network design and RIP configuration), final report
 ```
 
 ## Scripts
