@@ -51,6 +51,7 @@ python scripts/get_routes.py T0-baseline              # snapshot -> data/snapsho
 python scripts/compare_routes.py T1-before T1-after   # what changed between two snapshots (labels or file paths)
 python scripts/push_config.py configs/push/timestamps.txt all
 python scripts/push_config.py configs/push/t5-start.txt LAB-R3 --no-save
+python scripts/parse_rip_debug.py data/debug_logs/T1-run1_LIB-R1.txt --network 192.168.20.0/24 --metric 2
 python -m pytest                                      # parser tests, no routers needed
 ```
 
