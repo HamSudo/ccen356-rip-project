@@ -6,8 +6,8 @@ of routes, then saves:
   - data/snapshots/<time>_<label>.json  one file per snapshot (all routers)
   - data/routes.csv                     every snapshot, one row per route
 
-    python get_routes.py T1-before
-    python get_routes.py T1-after --routers LIB-R1 TCH-R2
+    python scripts/get_routes.py T1-before
+    python scripts/get_routes.py T1-after --routers LIB-R1 TCH-R2
 
 parse_routes() is also imported by Zayed's monitor_convergence.py, which
 calls it once a second to spot the moment a route changes.

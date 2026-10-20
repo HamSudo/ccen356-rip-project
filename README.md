@@ -7,6 +7,7 @@ CCEN 356 Course Project 1: RIPv2 dynamic routing in a three-room school network 
 ```
 configs/source/     paste-in configs for the 3 routers and 3 switches (Saif)
 configs/exports/    show running-config exports from the built devices (Saif)
+configs/push/       config snippets for push_config.py (RIP block, timestamps, T5)
 topology/           school-rip.pkt, topology.png (Saif)
 scripts/            inventory.py, connect_test.py, push_config.py,
                     get_routes.py, compare_routes.py, parse_rip_debug.py (Mouhamed)
@@ -42,4 +43,14 @@ $env:RIP_PASS = "other-password"   # PowerShell, lasts for this terminal only
 
 ## Running the scripts
 
-Usage for each script is added here as it lands.
+Run everything from the repo root.
+
+```
+python scripts/connect_test.py                        # can we SSH into all 3 routers?
+python scripts/get_routes.py T0-baseline              # snapshot -> data/snapshots/*.json + data/routes.csv
+python scripts/push_config.py configs/push/timestamps.txt all
+python scripts/push_config.py configs/push/t5-start.txt LAB-R3 --no-save
+python -m pytest                                      # parser tests, no routers needed
+```
+
+`configs/push/` holds the files `push_config.py` applies: the RIP block for each router, the timestamp lines to push before testing, and the T5 start/stop changes. They contain config-mode lines only (no `configure terminal` or `end`).

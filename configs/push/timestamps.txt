@@ -1,0 +1,6 @@
+! Push to all three routers before testing.
+! Puts a date and millisecond time on every debug and log line, so
+! parse_rip_debug.py can measure the time between a link going down
+! and the first RIP update that carries the new route.
+service timestamps debug datetime msec
+service timestamps log datetime msec
