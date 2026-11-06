@@ -10,14 +10,13 @@ and plots:
                                    monitor_convergence.py log
 
     python scripts/visualize.py
-    python scripts/visualize.py --simulated
     python scripts/visualize.py --results data/results.csv --timeline data/monitor_logs/T1-run1_LIB-R1.csv
 
 T5 (~240-270 s) is an order of magnitude longer than T1..T4 (~1-30 s), so the
 comparison figure shows a two-panel layout: all tests T1..T5 on the left, and a
 zoomed T1..T4 panel on the right so the fast tests remain easy to read.
 
-Whenever any input is marked 'simulated' (or --simulated is passed), the chart
+Whenever any input row is marked 'simulated', the chart
 title, subtitle, watermark and file name clearly mark it as SIMULATED SAMPLE
 DATA so it can never be mistaken for real lab measurements.
 """
@@ -448,19 +447,16 @@ def main(argv=None):
     parser.add_argument("--monitor-dir", type=Path, help="monitor_logs directory")
     parser.add_argument("--charts-dir", type=Path, help="where to save PNG charts")
     parser.add_argument("--timeline", type=Path, nargs="*", help="specific monitor CSV file(s) to plot")
-    parser.add_argument("--simulated", action="store_true",
-                        help="use data/simulated/ and stamp every chart as SIMULATED SAMPLE DATA")
     args = parser.parse_args(argv)
 
-    base = DATA_DIR / "simulated" if args.simulated else DATA_DIR
-    results_path = args.results or (base / "results.csv")
-    debug_dir = args.debug_dir or (base / "debug_logs")
-    monitor_dir = args.monitor_dir or (base / "monitor_logs")
-    charts_dir = args.charts_dir or (base / "charts" if args.simulated else CHARTS_DIR)
+    results_path = args.results or (DATA_DIR / "results.csv")
+    debug_dir = args.debug_dir or (DATA_DIR / "debug_logs")
+    monitor_dir = args.monitor_dir or (DATA_DIR / "monitor_logs")
+    charts_dir = args.charts_dir or CHARTS_DIR
 
     saved = generate_all_charts(
         results_path=results_path, debug_dir=debug_dir, monitor_dir=monitor_dir,
-        charts_dir=charts_dir, timeline_files=args.timeline, simulated=args.simulated,
+        charts_dir=charts_dir, timeline_files=args.timeline,
     )
     for p in saved:
         print(f"Saved chart: {p}")

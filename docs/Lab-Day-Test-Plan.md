@@ -21,7 +21,7 @@ This plan is for the whole team on lab day. It goes from "devices just powered o
 | G | Tests T0 to T5 | 75 min |
 | H | Collect, commit, clean up | 10 min |
 
-Everything in the report and the repo must come from the real routers. The files in `data/simulated/` and the `SIMULATED_*.png` charts only tested the scripts; none of them go in the report.
+Everything in the report and the repo must come from the real routers.
 
 ---
 

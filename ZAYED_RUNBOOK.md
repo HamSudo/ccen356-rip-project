@@ -1,4 +1,4 @@
-# Zayed's Runbook: Measurement Commands and Demo Steps (CCEN 356 Project 1)
+# Zayed's Runbook: Measurement Commands (CCEN 356 Project 1)
 
 The commands that collect every measurement, as run in the lab on 6 Nov 2026 on the all-Ethernet build ([`docs/Design-Change-All-Ethernet.md`](docs/Design-Change-All-Ethernet.md)). Who presses what, and when, is in [`docs/Lab-Day-Test-Plan.md`](docs/Lab-Day-Test-Plan.md); this file is the command reference.
 
@@ -60,7 +60,7 @@ python scripts/visualize.py                                          # data/char
 
 `collect_results.py` picks up extra runs (T1-run4) and, where a raw capture was lost, the runner's printed figures in `data/debug_logs/runner_debug_lines_T1-T4.txt`. Results and their caveats are written up in [`docs/Section-6a-Link-Failure-Tests-and-Results.md`](docs/Section-6a-Link-Failure-Tests-and-Results.md).
 
-## 5. Single tools (for the demo or a re-check)
+## 5. Single tools (for a re-check)
 
 ```powershell
 python scripts/monitor_convergence.py LIB-R1 --network 192.168.20.0/24 --expect-metric 2 --duration 90 --mark-on-enter
@@ -69,12 +69,7 @@ python scripts/parse_rip_debug.py data/debug_logs/T5-run1_LIB-R1.txt --network 1
 python scripts/compare_routes.py T1-run2-before T1-run2-after
 ```
 
-## 6. Demo steps (Zayed)
-
-1. **Live T1:** start the monitor on LIB-R1 (first command in section 5). A teammate shuts `GigabitEthernet0/1` on the LIB-R1 console and the far end is pushed to TCH-R2 (`t1-far-down.txt`); press Enter to mark it. Point out `route_lost`, then `route_restored ... via 10.0.13.2 ... m2` when LAB-R3's next update arrives.
-2. **Restore and charts:** `t1-far-up.txt` to TCH-R2, then `no shutdown` on LIB-R1 `G0/1`. Open `data/charts/convergence_comparison.png` and `data/charts/timeline_T5-run1_LIB-R1.png` to show link failures (5–28 s) against the silent failure (about 257 s).
-
-## 7. Troubleshooting
+## 6. Troubleshooting
 
 - **Debug left on after a failed run:** `undebug all` on that router's console, or `python scripts/capture_rip_debug.py <ROUTER> --duration 1`.
 - **`No convergence event pair found`:** check the shutdown was on the measured router's physical `G0/1` (a subinterface shutdown logs no `%LINK` line), and for T5 that at least one update from `10.0.13.2` was logged before `t5-start.txt`.

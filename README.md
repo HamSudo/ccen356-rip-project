@@ -41,9 +41,8 @@ data/ping_logs/photos/  ping and traceroute photos, before/after each run
 data/console_logs/   PuTTY console session logs
 data/results.csv     results table, one row per run
 data/charts/         charts for the report
-data/simulated/      offline test data for the scripts; not used in the report
-docs/                design docs, lab day test plan, report section drafts and evidence guide
-topology/            topology diagram and photos (to add)
+docs/                design docs, lab day test plan, report section drafts, evidence guide, report tasks
+topology/            topology diagram (to add) and rack/cabling photos
 ```
 
 ## Scripts
@@ -62,7 +61,7 @@ topology/            topology diagram and photos (to add)
 | [`experiments.py`](scripts/experiments.py) | The T0–T5 test definitions: measured router, watched route, expected result, operator steps |
 | [`collect_results.py`](scripts/collect_results.py) | Builds `data/results.csv` and the Markdown results table from the saved logs |
 | [`visualize.py`](scripts/visualize.py) | Draws the convergence comparison chart and the per-test route timelines |
-| [`sim_router.py`](scripts/sim_router.py), [`simulate_data.py`](scripts/simulate_data.py) | Offline simulator used to test the scripts before the lab |
+| [`sim_router.py`](scripts/sim_router.py) | A pretend router used by the tests, so they run without hardware |
 
 ## Setup
 
@@ -133,6 +132,6 @@ Full per-run data: [`data/results.csv`](data/results.csv). Charts: [`data/charts
 | Saif | Network design and Cisco configuration |
 | Mouhamed | Python automation, repository, final report |
 | Zayed | Measurement, testing and visualisation |
-| Abdulrahman | Convergence analysis, RIP limitations, demo |
+| Abdulrahman | Introduction, convergence analysis, RIP limitations, conclusion |
 
-Who does what and the demo run-sheet are in the [team plan](docs/Team-Plan-and-Technical-Guide-v3.pdf) (written for the serial design; the tests and commands now follow the all-Ethernet design above).
+Remaining report work per member: [`docs/Report-Tasks.md`](docs/Report-Tasks.md). The original [team plan](docs/Team-Plan-and-Technical-Guide-v3.pdf) was written for the serial design; the tests, commands and report tasks now follow the all-Ethernet design above.

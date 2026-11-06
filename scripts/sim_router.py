@@ -1,5 +1,5 @@
 """
-sim_router.py - a pretend Cisco router for offline tests and SIMULATED sample data.
+sim_router.py - a pretend Cisco router for offline tests.
 
 Nothing here talks to real equipment. It renders 'show ip route rip' and
 'debug ip rip' / 'debug ip routing' text in IOS 15 style from a scenario,
@@ -8,7 +8,7 @@ clock, so monitor_convergence.py and capture_rip_debug.py can be run end
 to end without routers and without waiting in real time.
 
 Every value it produces is made up. Anything generated with it must be
-labelled SIMULATED (simulate_data.py does this).
+labelled SIMULATED.
 """
 
 import random

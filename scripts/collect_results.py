@@ -8,8 +8,6 @@ per run to data/results.csv.
 
     python scripts/collect_results.py
     python scripts/collect_results.py --ping T1-run1=3 T1-run2=2
-    python scripts/collect_results.py --debug-dir data/simulated/debug_logs \\
-        --monitor-dir data/simulated/monitor_logs --out data/simulated/results.csv --source simulated
 
 Also prints the exact results table from the team plan (Run 1, Run 2, Run 3,
 Average, Min, Max, Pings lost) so it can be pasted straight into Section 6a.

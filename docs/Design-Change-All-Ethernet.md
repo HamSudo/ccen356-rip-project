@@ -150,7 +150,7 @@ Side effects:
 | 6b Analysis | The "one end only" effect is worth a sentence: on a switched link, a dead neighbour is only noticed via RIP's timers, which is the T5 situation. It's a real-world argument for BFD or a faster protocol |
 | 7 Limitations | The "Ethernet vs 64 kbps serial both count as 1 hop" example no longer applies to our build. Make the point in general terms: RIP ignores bandwidth |
 
-The Packet Tracer file (`topology/school-rip.pkt`) should be rebuilt the same way, with 2901s without the HWIC-2T and the same VLANs. The `data/simulated/` files and `SIMULATED_*` charts still use the old serial interface names; they only ever tested the scripts and are not used in the report.
+The Packet Tracer file (`topology/school-rip.pkt`) should be rebuilt the same way, with 2901s without the HWIC-2T and the same VLANs.
 
 ## Files changed for this design
 
