@@ -1,0 +1,53 @@
+Syslog logging: enabled (0 messages dropped, 2 messages rate-limited,
+                0 flushes, 0 overruns, xml disabled, filtering disabled)
+
+No Active Message Discriminator.
+
+
+
+No Inactive Message Discriminator.
+
+
+    Console logging: level debugging, 508 messages logged, xml disabled,
+                     filtering disabled
+    Monitor logging: level debugging, 89 messages logged, xml disabled,
+                     filtering disabled
+    Buffer logging:  level debugging, 484 messages logged, xml disabled,
+                     filtering disabled
+    Logging Exception size (4096 bytes)
+    Count and timestamp logging messages: disabled
+    Persistent logging: disabled
+    Trap logging: level informational, 64 message lines logged
+
+Log Buffer (64000 bytes):
+
+Nov  6 19:23:02.499: RIP: received v2 update from 10.0.23.1 on GigabitEthernet0/0.23
+Nov  6 19:23:02.499:      10.0.12.0/30 via 0.0.0.0 in 1 hops
+Nov  6 19:23:02.499:      192.168.10.0/24 via 0.0.0.0 in 2 hops
+Nov  6 19:23:02.499:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 19:23:25.387: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.13.2)
+Nov  6 19:23:25.387: RIP: build update entries
+Nov  6 19:23:25.387: 	10.0.23.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:23:25.387: 	192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 19:23:25.387: 	192.168.30.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:23:26.067: RIP: received v2 update from 10.0.13.1 on GigabitEthernet0/1
+Nov  6 19:23:26.067:      10.0.12.0/30 via 0.0.0.0 in 1 hops
+Nov  6 19:23:26.067: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.1 Gi0/1
+Nov  6 19:23:26.067:      192.168.10.0/24 via 0.0.0.0 in 1 hops
+Nov  6 19:23:26.067: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.13.1 Gi0/1
+Nov  6 19:23:26.067:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 19:23:26.067: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.1 Gi0/1
+Nov  6 19:23:26.067: RT: rib update return code: 19
+Nov  6 19:23:27.235: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.23 (10.0.23.2)
+Nov  6 19:23:27.235: RIP: build update entries
+Nov  6 19:23:27.235: 	10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:23:27.235: 	192.168.10.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 19:23:27.235: 	192.168.30.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:23:31.263: RIP: received v2 update from 10.0.23.1 on GigabitEthernet0/0.23
+Nov  6 19:23:31.263:      10.0.12.0/30 via 0.0.0.0 in 1 hops
+Nov  6 19:23:31.263: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.23.1 Gi0/0.23
+Nov  6 19:23:31.263:      192.168.10.0/24 via 0.0.0.0 in 2 hops
+Nov  6 19:23:31.263: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.23.1 Gi0/0.23
+Nov  6 19:23:31.263: RT: rib update return code: 19
+Nov  6 19:23:31.263:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 19:23:31.263: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.23.1 Gi0/0.23

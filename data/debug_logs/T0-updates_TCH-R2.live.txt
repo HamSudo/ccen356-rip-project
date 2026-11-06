@@ -1,0 +1,45 @@
+
+Nov  6 19:21:55.687: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.12 (10.0.12.2)
+Nov  6 19:21:55.687: RIP: build update entries
+Nov  6 19:21:55.687: 	10.0.23.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:21:55.687: 	192.168.20.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:21:55.687: 	192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 19:22:02.051: RIP: received v2 update from 10.0.23.2 on GigabitEthernet0/1
+Nov  6 19:22:02.051:      10.0.13.0/30 via 0.0.0.0 in 1 hops
+Nov  6 19:22:02.051: RT: updating rip 10.0.13.0/30 (0x0) via 10.0.23.2 Gi0/1
+Nov  6 19:22:02.051:      192.168.10.0/24 via 0.0.0.0 in 2 hops
+Nov  6 19:22:02.051: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.23.2 Gi0/1
+Nov  6 19:22:02.051: RT: rib update return code: 19
+Nov  6 19:22:02.051:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 19:22:02.051: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.23.2 Gi0/1
+Nov  6 19:22:05.259: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.23.1)
+Nov  6 19:22:05.259: RIP: build update entries
+Nov  6 19:22:05.259: 	10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:22:05.259: 	192.168.10.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 19:22:05.259: 	192.168.20.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:22:20.363: RIP: received v2 update from 10.0.12.1 on GigabitEthernet0/0.12
+Nov  6 19:22:20.363:      10.0.13.0/30 via 0.0.0.0 in 1 hops
+Nov  6 19:22:20.363: RT: updating rip 10.0.13.0/30 (0x0) via 10.0.12.1 Gi0/0.12
+Nov  6 19:22:20.363:      192.168.10.0/24 via 0.0.0.0 in 1 hops
+Nov  6 19:22:20.363: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.12.1 Gi0/0.12
+Nov  6 19:22:20.363:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 19:22:20.363: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.1 Gi0/0.12
+Nov  6 19:22:20.363: RT: rib update return code: 19
+Nov  6 19:22:23.483: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.12 (10.0.12.2)
+Nov  6 19:22:23.483: RIP: build update entries
+Nov  6 19:22:23.483: 	10.0.23.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:22:23.483: 	192.168.20.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:22:23.483: 	192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 19:22:29.695: RIP: received v2 update from 10.0.23.2 on GigabitEthernet0/1
+Nov  6 19:22:29.695:      10.0.13.0/30 via 0.0.0.0 in 1 hops
+Nov  6 19:22:29.695: RT: updating rip 10.0.13.0/30 (0x0) via 10.0.23.2 Gi0/1
+Nov  6 19:22:29.695:      192.168.10.0/24 via 0.0.0.0 in 2 hops
+Nov  6 19:22:29.695: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.23.2 Gi0/1
+Nov  6 19:22:29.695: RT: rib update return code: 19
+Nov  6 19:22:29.695:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 19:22:29.695: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.23.2 Gi0/1
+Nov  6 19:22:32.683: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.23.1)
+Nov  6 19:22:32.683: RIP: build update entries
+Nov  6 19:22:32.683: 	10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 19:22:32.683: 	192.168.10.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 19:22:32.683: 	192.168.20.0/24 via 0.0.0.0, metric 1, tag 0

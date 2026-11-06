@@ -1,0 +1,34 @@
+{
+  "router": "TCH-R2",
+  "label": "T0-updates",
+  "mode": "both",
+  "duration_s": 40.0,
+  "capture_file": "D:\\ccen356-rip-project\\data\\debug_logs\\T0-updates_TCH-R2.txt",
+  "laptop_start": "2026-11-06T19:21:45.665",
+  "laptop_end": "2026-11-06T19:22:36.720",
+  "clock_start": {
+    "laptop_sent": "2026-11-06T19:21:45.570",
+    "laptop_received": "2026-11-06T19:21:45.653",
+    "router_text": "19:21:44.531 UTC Fri Nov 6 2026",
+    "router_time": "2026-11-06T19:21:44.531",
+    "offset_s": -1.081,
+    "uncertainty_s": 0.042,
+    "clock_set": true
+  },
+  "clock_end": {
+    "laptop_sent": "2026-11-06T19:22:41.208",
+    "laptop_received": "2026-11-06T19:22:41.293",
+    "router_text": "19:22:40.171 UTC Fri Nov 6 2026",
+    "router_time": "2026-11-06T19:22:40.171",
+    "offset_s": -1.08,
+    "uncertainty_s": 0.042,
+    "clock_set": true
+  },
+  "debug_enabled": true,
+  "undebug_ok": true,
+  "session_drop": null,
+  "interrupted": false,
+  "warnings": [],
+  "error": null,
+  "ok": true
+}

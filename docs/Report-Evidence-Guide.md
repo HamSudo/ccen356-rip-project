@@ -71,7 +71,7 @@ Everything below backs the report but does not go in it. One sentence in the rep
 | Evidence | Location | Count |
 |---|---|---|
 | Before/after traceroute and ping photos, all runs | `data/ping_logs/photos/` | 32 |
-| Debug captures (raw lines, parsed CSV, metadata) | `data/debug_logs/` | 16 runs |
+| Debug captures (raw lines, parsed CSV, metadata) | `data/debug_logs/` | 16 runs + 3 normal-update captures |
 | Route monitor logs (1 s polling) | `data/monitor_logs/` | 16 runs |
 | Before/after routing snapshots | `data/snapshots/`, `data/routes.csv` | 37 files |
 | Device screenshots (other 5 devices) | `data/verification/screenshots/` | 5 |
@@ -103,4 +103,4 @@ Ping counts come from `grep -c` on the ping output and may count a packet twice 
 
 - The laptop's `data/debug_logs/` folder was deleted mid-session. Raw debug lines for T1, T3 and T4 were recovered from the console session logs (all 10 runs recompute to the same figures); T2's figures come from the test runner's printed output; T5 run 1 keeps its four key lines.
 - T1 was run four times: the extra cut put the link down again so the last T4 run could start.
-- The separate 40 s "normal RIP updates" captures were lost with that folder; every test run's debug capture also records the periodic updates sent and received, so those cover the brief's "capture RIP updates" item.
+- The 40 s "normal RIP updates" captures (brief: "capture RIP updates using debug ip rip and Python") were lost with that folder and re-recorded at the end of the session, at baseline, before the devices were wiped: `data/debug_logs/T0-updates_<router>.txt`.

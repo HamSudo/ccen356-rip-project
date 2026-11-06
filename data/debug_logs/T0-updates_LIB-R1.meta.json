@@ -1,0 +1,34 @@
+{
+  "router": "LIB-R1",
+  "label": "T0-updates",
+  "mode": "both",
+  "duration_s": 40.0,
+  "capture_file": "D:\\ccen356-rip-project\\data\\debug_logs\\T0-updates_LIB-R1.txt",
+  "laptop_start": "2026-11-06T19:20:33.643",
+  "laptop_end": "2026-11-06T19:21:24.703",
+  "clock_start": {
+    "laptop_sent": "2026-11-06T19:20:33.547",
+    "laptop_received": "2026-11-06T19:20:33.632",
+    "router_text": "19:20:33.455 UTC Fri Nov 6 2026",
+    "router_time": "2026-11-06T19:20:33.455",
+    "offset_s": -0.135,
+    "uncertainty_s": 0.042,
+    "clock_set": true
+  },
+  "clock_end": {
+    "laptop_sent": "2026-11-06T19:21:31.292",
+    "laptop_received": "2026-11-06T19:21:31.375",
+    "router_text": "19:21:31.199 UTC Fri Nov 6 2026",
+    "router_time": "2026-11-06T19:21:31.199",
+    "offset_s": -0.135,
+    "uncertainty_s": 0.042,
+    "clock_set": true
+  },
+  "debug_enabled": true,
+  "undebug_ok": true,
+  "session_drop": null,
+  "interrupted": false,
+  "warnings": [],
+  "error": null,
+  "ok": true
+}
