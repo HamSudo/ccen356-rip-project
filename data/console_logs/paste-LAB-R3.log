@@ -1,0 +1,71 @@
+
+Router>enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname LAB-R3
+LAB-R3(config)#no ip domain-lookup
+LAB-R3(config)#service password-encryption
+LAB-R3(config)#enable secret class123
+LAB-R3(config)#banner motd # LAB-R3 - Laboratory router. Authorized access on$ # LAB-R3 - Laboratory router. Authorized access onl         y. #
+LAB-R3(config)#interface GigabitEthernet0/0
+LAB-R3(config-if)# description Trunk to SW-LAB Fa0/7 (VLAN 30 LAN, VLAN 23 WA$n Trunk to SW-LAB Fa0/7 (VLAN 30 LAN, VLAN 23 WAN          to TCH-R SW-LAB Fa0/7 (VLAN 30 LAN, VLAN 23 WAN to TCH-R2         )
+LAB-R3(config-if)# no ip address
+LAB-R3(config-if)# no shutdown
+LAB-R3(config-if)# exit
+LAB-R3(config)#interface GigabitEthernet0/0.30
+LAB-R3(config-subif)# description LAN - Laboratory (VLAN 30)
+LAB-R3(config-subif)#
+*Nov  6 14:17:03.195: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to down encapsulation dot1Q 30
+LAB-R3(config-subif)# ip address 192.168.30.1 255.255.255.0
+LAB-R3(config-subif)#
+*Nov  6 14:17:05.883: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to up
+*Nov  6 14:17:06.883: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up exit
+LAB-R3(config)#interface GigabitEthernet0/0.23
+LAB-R3(config-subif)# description WAN - to TCH-R2 G0/1 through SW-LAB (VLAN 2$n WAN - to TCH-R2 G0/1 through SW-LAB (VLAN 23         )
+LAB-R3(config-subif)# encapsulation dot1Q 23
+LAB-R3(config-subif)# ip address 10.0.23.2 255.255.255.252
+LAB-R3(config-subif)# exit
+LAB-R3(config)#interface GigabitEthernet0/1
+LAB-R3(config-if)# description WAN - to LIB-R1 G0/0.13 through SW-LIB Fa0/8 ($n WAN - to LIB-R1 G0/0.13 through SW-LIB Fa0/8 (V         LAN 13)
+LAB-R3(config-if)# ip address 10.0.13.2 255.255.255.252
+LAB-R3(config-if)# no shutdown
+LAB-R3(config-if)# exit
+LAB-R3(config)#ip dhcp excluded-address 192.168.30.1 192.168.30.20
+LAB-R3(config)#ip dhcp pool LAB-LAN
+LAB-R3(dhcp-config)#
+*Nov  6 14:17:18.983: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+*Nov  6 14:17:19.983: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up network 192.168.30.0 255.255.255.0
+LAB-R3(dhcp-config)# default-router 192.168.30.1
+LAB-R3(dhcp-config)# exit
+LAB-R3(config)#router rip
+LAB-R3(config-router)# version 2
+LAB-R3(config-router)# no auto-summary
+LAB-R3(config-router)# network 10.0.0.0
+LAB-R3(config-router)# network 192.168.30.0
+LAB-R3(config-router)# passive-interface GigabitEthernet0/0.30
+LAB-R3(config-router)# exit
+LAB-R3(config)#ip domain-name school.local
+LAB-R3(config)#username admin privilege 15 secret Admin@123
+LAB-R3(config)#crypto key generate rsa general-keys modulus 1024
+The name for the keys will be: LAB-R3.school.local
+
+% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]
+
+LAB-R3(config)#ip ssh version 2
+LAB-R3(config)#
+*Nov  6 14:17:44.583: %SSH-5-ENABLED: SSH 1.99 has been enabledline console 0
+LAB-R3(config-line)# password cisco
+LAB-R3(config-line)# login
+LAB-R3(config-line)# logging synchronous
+LAB-R3(config-line)# exit
+LAB-R3(config)#line vty 0 4
+LAB-R3(config-line)# login local
+LAB-R3(config-line)# transport input ssh
+LAB-R3(config-line)# exit
+LAB-R3(config)#end
+LAB-R3#write memory
+Building configuration...
+
+*Nov  6 14:17:55.011: %SYS-5-CONFIG_I: Configured from console by console[OK]
+LAB-R3#

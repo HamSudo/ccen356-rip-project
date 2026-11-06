@@ -1,0 +1,11 @@
+obs_time,t_rel_s,since_mark_s,router,network,event,changes,metric_before,metric_after,next_hop_before,next_hop_after,status_before,status_after,before,after,window_start,window_s,after_gap,poll,detail
+2026-11-06T17:14:57.866,0.0,,LIB-R1,,monitor_start,,,,,,,,,,,,,0,source=live; interval=1s; target=192.168.20.0/24; expect_metric=2
+2026-11-06T17:14:58.592,0.719,,LIB-R1,10.0.23.0/30,baseline,,,1,,10.0.12.2+10.0.13.2,,up,,via 10.0.12.2 (GigabitEthernet0/1) m1 + via 10.0.13.2 (GigabitEthernet0/0.13) m1,,,,1,
+2026-11-06T17:14:58.592,0.719,,LIB-R1,192.168.20.0/24,baseline,,,1,,10.0.12.2,,up,,via 10.0.12.2 (GigabitEthernet0/1) m1,,,,1,
+2026-11-06T17:14:58.592,0.719,,LIB-R1,192.168.30.0/24,baseline,,,1,,10.0.13.2,,up,,via 10.0.13.2 (GigabitEthernet0/0.13) m1,,,,1,
+2026-11-06T17:15:13.349,15.481,0.0,LIB-R1,,mark,,,,,,,,,,,,,15,failure applied
+2026-11-06T17:15:15.592,17.719,2.243,LIB-R1,10.0.23.0/30,route_changed,"next_hop,paths",1,1,10.0.12.2+10.0.13.2,10.0.13.2,up,up,via 10.0.12.2 (GigabitEthernet0/1) m1 + via 10.0.13.2 (GigabitEthernet0/0.13) m1,via 10.0.13.2 (GigabitEthernet0/0.13) m1,2026-11-06T17:15:14.516,1.076,0,18,
+2026-11-06T17:15:15.592,17.719,2.243,LIB-R1,192.168.20.0/24,route_lost,disappeared,1,,10.0.12.2,,up,,via 10.0.12.2 (GigabitEthernet0/1) m1,,2026-11-06T17:15:14.516,1.076,0,18,
+2026-11-06T17:15:31.585,33.719,18.236,LIB-R1,192.168.20.0/24,route_restored,appeared,,2,,10.0.13.2,,up,,via 10.0.13.2 (GigabitEthernet0/0.13) m2,2026-11-06T17:15:30.511,1.074,0,34,
+2026-11-06T17:15:31.585,33.719,18.236,LIB-R1,192.168.20.0/24,converged,,,2,,10.0.13.2,,up,,via 10.0.13.2 (GigabitEthernet0/0.13) m2,,,,69,stable for 35 s (confirmed at 17:16:06.598)
+2026-11-06T17:16:58.520,120.656,105.171,LIB-R1,,monitor_stop,,,,,,,,,,,,,120,

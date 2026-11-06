@@ -1,0 +1,23 @@
+6 commands from configs/push/rip-TCH-R2.txt:
+    router rip
+     version 2
+     no auto-summary
+     network 10.0.0.0
+     network 192.168.20.0
+     passive-interface GigabitEthernet0/0.20
+
+=== TCH-R2 ===
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+TCH-R2(config)#router rip
+TCH-R2(config-router)# version 2
+TCH-R2(config-router)# no auto-summary
+TCH-R2(config-router)# network 10.0.0.0
+TCH-R2(config-router)# network 192.168.20.0
+TCH-R2(config-router)# passive-interface GigabitEthernet0/0.20
+TCH-R2(config-router)#end
+TCH-R2#
+write mem
+Building configuration...
+[OK]
+TCH-R2#

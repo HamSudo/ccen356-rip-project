@@ -1,0 +1,56 @@
+{
+  "label": "T5-run1",
+  "router": "LIB-R1",
+  "source": "live",
+  "networks": "all",
+  "target": "192.168.30.0/24",
+  "expect_metric": 2,
+  "expect_next_hop": "10.0.12.2",
+  "stable_for_s": 35.0,
+  "interval_target_s": 1.0,
+  "started": "2026-11-06T18:30:55.900",
+  "ended": "2026-11-06T18:37:56.614",
+  "interrupted": false,
+  "marks": [
+    {
+      "time": "2026-11-06T18:31:36.958",
+      "text": "failure applied"
+    }
+  ],
+  "first_change": {
+    "obs_time": "2026-11-06T18:34:20.621",
+    "since_mark_s": 163.662,
+    "window_s": 1.074,
+    "network": "192.168.30.0/24",
+    "event": "possibly_down",
+    "after": "via 10.0.13.2 (GigabitEthernet0/) m16 POSSIBLY DOWN"
+  },
+  "converged": {
+    "obs_time": "2026-11-06T18:35:42.603",
+    "since_mark_s": 245.644,
+    "window_s": null,
+    "network": "192.168.30.0/24",
+    "event": "converged",
+    "after": "via 10.0.12.2 (GigabitEthernet0/1) m2"
+  },
+  "target_met_at_start": false,
+  "final_state": {
+    "10.0.23.0/30": "via 10.0.12.2 (GigabitEthernet0/1) m1",
+    "192.168.20.0/24": "via 10.0.12.2 (GigabitEthernet0/1) m1",
+    "192.168.30.0/24": "via 10.0.12.2 (GigabitEthernet0/1) m2"
+  },
+  "polls": 399,
+  "polls_ok": 399,
+  "polls_failed": 0,
+  "poll_interval_mean_s": 1.053,
+  "poll_interval_max_s": 22.063,
+  "poll_duration_mean_s": 0.139,
+  "poll_duration_max_s": 22.063,
+  "polls_slower_than_interval": 1,
+  "session_gaps": [],
+  "files": {
+    "events": "D:\\ccen356-rip-project\\data\\monitor_logs\\T5-run1_LIB-R1.csv",
+    "polls": "D:\\ccen356-rip-project\\data\\monitor_logs\\T5-run1_LIB-R1_polls.csv"
+  },
+  "time_note": "obs_time = laptop clock when the change was SEEN; the change happened inside [window_start, obs_time]. Marks are operator key presses, not router events."
+}

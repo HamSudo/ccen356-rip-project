@@ -173,9 +173,9 @@ def plot_convergence_comparison(rows, out_path, simulated=False, method_field="d
 
 def _short_title(test):
     return {
-        "T1": "LIB–TCH\nserial down",
-        "T2": "LIB–LAB\nGi0/1 down",
-        "T3": "TCH–LAB\nserial down",
+        "T1": "LIB–TCH\nlink down",
+        "T2": "LIB–LAB\nlink down",
+        "T3": "TCH–LAB\nlink down",
         "T4": "T1 link\nrecovery",
         "T5": "Silent peer\n(passive Gi0/1)",
     }.get(test, test)

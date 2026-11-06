@@ -1,0 +1,43 @@
+3 commands from configs/push/timestamps.txt:
+    service timestamps debug datetime msec
+    service timestamps log datetime msec
+    logging buffered 64000 debugging
+
+=== LIB-R1 ===
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#service timestamps debug datetime msec
+LIB-R1(config)#service timestamps log datetime msec
+LIB-R1(config)#logging buffered 64000 debugging
+LIB-R1(config)#end
+LIB-R1#
+write mem
+Building configuration...
+[OK]
+LIB-R1#
+
+=== TCH-R2 ===
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+TCH-R2(config)#service timestamps debug datetime msec
+TCH-R2(config)#service timestamps log datetime msec
+TCH-R2(config)#logging buffered 64000 debugging
+TCH-R2(config)#end
+TCH-R2#
+write mem
+Building configuration...
+[OK]
+TCH-R2#
+
+=== LAB-R3 ===
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+LAB-R3(config)#service timestamps debug datetime msec
+LAB-R3(config)#service timestamps log datetime msec
+LAB-R3(config)#logging buffered 64000 debugging
+LAB-R3(config)#end
+LAB-R3#
+write mem
+Building configuration...
+[OK]
+LAB-R3#

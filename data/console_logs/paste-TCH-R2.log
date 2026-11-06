@@ -1,0 +1,71 @@
+
+Router>enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname TCH-R2
+TCH-R2(config)#no ip domain-lookup
+TCH-R2(config)#service password-encryption
+TCH-R2(config)#enable secret class123
+TCH-R2(config)#banner motd # TCH-R2 - Teachers room router. Authorized access$ # TCH-R2 - Teachers room router. Authorized access          only. #
+TCH-R2(config)#interface GigabitEthernet0/0
+TCH-R2(config-if)# description Trunk to SW-TCH Fa0/7 (VLAN 20 LAN, VLAN 12 WA$n Trunk to SW-TCH Fa0/7 (VLAN 20 LAN, VLAN 12 WAN          to LIB-R SW-TCH Fa0/7 (VLAN 20 LAN, VLAN 12 WAN to LIB-R1         )
+TCH-R2(config-if)# no ip address
+TCH-R2(config-if)# no shutdown
+TCH-R2(config-if)# exit
+TCH-R2(config)#interface GigabitEthernet0/0.20
+TCH-R2(config-subif)# description LAN - Teachers room (VLAN 20)
+TCH-R2(config-subif)#
+*Nov  6 11:26:53.135: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to down
+*Nov  6 11:26:55.271: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to up
+*Nov  6 11:26:56.271: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up encapsulation dot1Q 20
+TCH-R2(config-subif)# ip address 192.168.20.1 255.255.255.0
+TCH-R2(config-subif)# exit
+TCH-R2(config)#interface GigabitEthernet0/0.12
+TCH-R2(config-subif)# description WAN - to LIB-R1 G0/1 through SW-TCH (VLAN 1$n WAN - to LIB-R1 G0/1 through SW-TCH (VLAN 12         )
+TCH-R2(config-subif)# encapsulation dot1Q 12
+TCH-R2(config-subif)# ip address 10.0.12.2 255.255.255.252
+TCH-R2(config-subif)# exit
+TCH-R2(config)#interface GigabitEthernet0/1
+TCH-R2(config-if)# description WAN - to LAB-R3 G0/0.23 through SW-LAB Fa0/8 ($n WAN - to LAB-R3 G0/0.23 through SW-LAB Fa0/8 (V         LAN 23)
+TCH-R2(config-if)# ip address 10.0.23.1 255.255.255.252
+TCH-R2(config-if)# no shutdown
+TCH-R2(config-if)# exit
+TCH-R2(config)#ip dhcp excluded-address 192.168.20.1 192.168.20.20
+TCH-R2(config)#ip dhcp pool TCH-LAN
+TCH-R2(dhcp-config)#
+*Nov  6 11:27:17.459: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+*Nov  6 11:27:18.459: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up network 192.168.20.0 255.255.255.0
+TCH-R2(dhcp-config)# default-router 192.168.20.1
+TCH-R2(dhcp-config)# exit
+TCH-R2(config)#router rip
+TCH-R2(config-router)# version 2
+TCH-R2(config-router)# no auto-summary
+TCH-R2(config-router)# network 10.0.0.0
+TCH-R2(config-router)# network 192.168.20.0
+TCH-R2(config-router)# passive-interface GigabitEthernet0/0.20
+TCH-R2(config-router)# exit
+TCH-R2(config)#ip domain-name school.local
+TCH-R2(config)#username admin privilege 15 secret Admin@123
+TCH-R2(config)#crypto key generate rsa general-keys modulus 1024
+The name for the keys will be: TCH-R2.school.local
+
+% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]
+
+TCH-R2(config)#ip ssh version 2
+TCH-R2(config)#
+*Nov  6 11:27:32.715: %SSH-5-ENABLED: SSH 1.99 has been enabledline console 0
+TCH-R2(config-line)# password cisco
+TCH-R2(config-line)# login
+TCH-R2(config-line)# logging synchronous
+TCH-R2(config-line)# exit
+TCH-R2(config)#line vty 0 4
+TCH-R2(config-line)# login local
+TCH-R2(config-line)# transport input ssh
+TCH-R2(config-line)# exit
+TCH-R2(config)#end
+TCH-R2#write memory
+Building configuration...
+
+*Nov  6 11:27:43.051: %SYS-5-CONFIG_I: Configured from console by console[OK]
+TCH-R2#

@@ -1,0 +1,805 @@
+=~=~=~=~=~=~=~=~=~=~=~= PuTTY log 2026.11.06 16:56:07 =~=~=~=~=~=~=~=~=~=~=~=
+
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/1
+LIB-R1(config-if)#no shutdown
+Nov  6 16:57:31.403: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 16:57:31.403:      10.0.12.0/30 via 0.0.0.0 in 2 hops
+Nov  6 16:57:31.403:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:57:31.403:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:57:31.407:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+LIB-R1(config-if)#no shutdown
+Nov  6 16:57:35.095: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:57:35.095: RIP: build update entries
+Nov  6 16:57:35.095: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#no shutdown
+LIB-R1(config-if)#
+Nov  6 16:57:59.783: is_up: GigabitEthernet0/1 0 state: 5 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 16:58:01.319: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 16:58:01.319:      10.0.12.0/30 via 0.0.0.0 in 2 hops
+Nov  6 16:58:01.319: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:01.319:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:58:01.319: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:01.323:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:58:01.323: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.
+LIB-R1(config-if)#2 Gi0/0.13
+Nov  6 16:58:01.323:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:58:01.323: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:01.743: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down
+Nov  6 16:58:01.743: is_up: GigabitEthernet0/1 0 state: 0 sub state: 1 line: 0
+Nov  6 16:58:02.647: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:58:02.647: RIP: build update entries
+Nov  6 16:58:02.647: 192.168.10.0/2
+LIB-R1(config-if)#4 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#
+Nov  6 16:58:05.427: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+LIB-R1(config-if)#
+Nov  6 16:58:05.427: is_up: GigabitEthernet0/1 0 state: 4 sub state: 1 line: 1
+Nov  6 16:58:06.427: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+Nov  6 16:58:06.427: is_up: GigabitEthernet0/1 1 state: 4 sub state: 1 line: 1
+Nov  6 16:58:06.427: RT: updating connected 10.0.12.0/30 (0x0) via 0.0.0.0 Gi0/1
+Nov  6 16:58:06.427: RT: closer admin distance for 10.0.12.0, flushing 1 routes
+Nov  6 16:58:06.427: RT: add 10.0.12.0/30 via 0.0.0.0, connected metric [0/0
+LIB-R1(config-if)#]
+Nov  6 16:58:06.427: RT: interface GigabitEthernet0/1 added to routing table
+Nov  6 16:58:06.427: RIP: sending request on GigabitEthernet0/1 to 224.0.0.9
+Nov  6 16:58:06.427: RT: updating connected 10.0.12.1/32 (0x0) via 0.0.0.0 Gi0/1
+Nov  6 16:58:06.427: RT: add 10.0.12.1/32 via 0.0.0.0, connected metric [0/0]
+LIB-R1(config-if)#
+Nov  6 16:58:08.427: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:58:08.427: RIP: build flash update entries
+Nov  6 16:58:08.427: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:58:08.427: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 16:58:08.427: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#
+Nov  6 16:58:19.303: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 16:58:19.303:      10.0.13.0/30 via 0.0.0.0 in 2 hops
+Nov  6 16:58:19.303: RT: updating rip 10.0.13.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:19.303: RT: rib update return code: 17
+Nov  6 16:58:19.303:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:58:19.303: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:19.303: RT: add 10.0.23.0/30 via 10.0.12.2, rip metric [120/1]
+Nov  6 16:58:19.
+LIB-R1(config-if)#303:      192.168.10.0/24 via 0.0.0.0 in 3 hops
+Nov  6 16:58:19.303: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:19.303: RT: rib update return code: 17
+Nov  6 16:58:19.303:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:58:19.303: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:19.303: RT: del 192.168.20.0/24 via 10.0.13.2, rip metric [120/2]
+Nov  6 16:58:19.303: RT: add 192.168.20.0/24 via 10.0.12.2, rip metric [120/1]
+Nov  6 16:58:19.303:  
+LIB-R1(config-if)#    192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:58:19.303: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:19.303: RT: rib update return code: 19
+LIB-R1(config-if)#
+Nov  6 16:58:21.303: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:58:21.303: RIP: build flash update entries
+Nov  6 16:58:21.303: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 16:58:21.303: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 16:58:21.303: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#
+Nov  6 16:58:30.667: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 16:58:30.667:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:58:30.667: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:30.667:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:58:30.667: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:30.671: RT: rib update return code: 19
+Nov  6 16:58:30.671:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:58:
+LIB-R1(config-if)#30.671: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:31.691: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:58:31.691: RIP: build update entries
+Nov  6 16:58:31.691: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:58:31.691: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:58:31.691: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 16:58:34.791: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 16:58:34.791: RIP: build update entries
+Nov  6 16:58:34.791: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:58:34.791: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:58:34.791: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 16:58:47.139: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 16:58:47.139:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:58:47.139: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:47.139:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:58:47.139: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:58:47.139:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:58:47.139: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#i0/1
+Nov  6 16:58:47.139: RT: rib update return code: 19
+LIB-R1(config-if)#
+Nov  6 16:58:57.483: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 16:58:57.483:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:58:57.483: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:57.483:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:58:57.483: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:58:57.487: RT: rib update return code: 19
+Nov  6 16:58:57.487:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:58:
+LIB-R1(config-if)#57.487: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#
+Nov  6 16:59:01.359: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:59:01.359: RIP: build update entries
+Nov  6 16:59:01.359: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:01.359: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:01.359: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 16:59:03.191: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 16:59:03.191: RIP: build update entries
+Nov  6 16:59:03.191: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:03.191: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:03.191: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 16:59:13.963: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 16:59:13.963:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:59:13.963: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:59:13.963:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:59:13.963: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 16:59:13.963:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:59:13.963: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#endi0/1
+Nov  6 16:59:13.963: RT: rib update return code: 19
+LIB-R1(config-if)#end
+Nov  6 16:59:23.423: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 16:59:23.423:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 16:59:23.423: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:59:23.423:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 16:59:23.423: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 16:59:23.427: RT: rib update return code: 19
+Nov  6 16:59:23.427:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 16:59:
+LIB-R1(config-if)#end23.427: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 16:59:29.307: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 16:59:29.307: RIP: build update entries
+Nov  6 16:59:29.307: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:29.307: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:29.307: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 16:59:30.707: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 16:59:30.707: RIP: build update entries
+Nov  6 16:59:30.707: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:30.707: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 16:59:30.707: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+LIB-R1#
+Nov  6 16:59:44.995: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0.1  /1
+LIB-R1(config-if)#shutdown
+Nov  6 17:03:47.535: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:03:47.535:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:03:47.535: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:03:47.535:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:03:47.535: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:03:47.535:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:03:47.535: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#shutdowni0/1
+Nov  6 17:03:47.535: RT: rib update return code: 19
+LIB-R1(config-if)#shutdown
+LIB-R1(config-if)#
+Nov  6 17:03:59.243: is_up: GigabitEthernet0/1 0 state: 6 sub state: 1 line: 0
+Nov  6 17:03:59.243: RT: del 10.0.23.0 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:03:59.243: RT: del 192.168.20.0 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:03:59.243: RT: delete network route to 192.168.20.0/24
+Nov  6 17:03:59.243: RT: interface GigabitEthernet0/1 removed from routing table
+Nov  6 17:03:59.243: RT: del 10.0.12.0 via 0.0.0.0, connected metric [0/0]
+Nov  6 17:03:59.243: RT: delete subnet route to 10.0.1
+LIB-R1(config-if)#2.0/30
+Nov  6 17:03:59.243: RT: delete route to 10.0.12.1 via 0.0.0.0, GigabitEthernet0/1
+Nov  6 17:03:59.243: RT: no routes to 10.0.12.1, flushing
+Nov  6 17:04:01.239: %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to administratively down
+LIB-R1(config-if)#
+Nov  6 17:04:01.239: is_up: GigabitEthernet0/1 0 state: 6 sub state: 1 line: 0
+Nov  6 17:04:01.243: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:04:01.243: RIP: build flash update entries
+Nov  6 17:04:01.243: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:04:01.243: 192.168.20.0/24 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:04:02.239: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+Nov  6 17:04:02.239: is_up
+LIB-R1(config-if)#: GigabitEthernet0/1 0 state: 6 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 17:04:03.803: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:04:03.803: RIP: build update entries
+Nov  6 17:04:03.803: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:04:03.803: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:04:03.803: 192.168.20.0/24 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:04:03.891: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:04:03.891:      10.0.12.0/30 via 0.0.0.0 in 2 hops
+Nov  6 17:04:0
+LIB-R1(config-if)#3.891: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:03.891: RT: add 10.0.12.0/30 via 10.0.13.2, rip metric [120/2]
+Nov  6 17:04:03.891:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:04:03.891: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:03.895:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:04:03.895: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:03.895: RT: add 192.168.20.0/24 via 10.0.13.2, rip metric [120
+LIB-R1(config-if)#/2]
+Nov  6 17:04:03.895:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:04:03.895: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#
+Nov  6 17:04:05.891: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:04:05.891: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#
+Nov  6 17:04:10.279: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:04:10.279:      10.0.12.0/30 via 0.0.0.0 in 16 hops  (inaccessible)
+Nov  6 17:04:10.279: RT: del 10.0.12.0 via 10.0.13.2, rip metric [120/2]
+Nov  6 17:04:10.279: RT: delete subnet route to 10.0.12.0/30
+Nov  6 17:04:10.279: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:10.283: RT: rib update return code: 5
+LIB-R1(config-if)#
+Nov  6 17:04:12.279: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:04:12.279: RIP: build flash update entries
+Nov  6 17:04:12.279: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:04:29.823: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:04:29.823:      10.0.12.0/30 via 0.0.0.0 in 16 hops  (inaccessible)
+Nov  6 17:04:29.823: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:29.823: RT: rib update return code: 5
+Nov  6 17:04:29.823:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:04:29.823: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:29.823:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov
+LIB-R1(config-if)#end  6 17:04:29.823: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:29.827:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:04:29.827: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:04:33.091: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:04:33.091: RIP: build update entries
+Nov  6 17:04:33.091: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:04:33.091: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:04:55.923: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:04:55.923:      10.0.12.0/30 via 0.0.0.0 in 16 hops  (inaccessible)
+Nov  6 17:04:55.923: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:55.923: RT: rib update return code: 5
+Nov  6 17:04:55.923:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:04:55.923: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:55.923:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov
+LIB-R1(config-if)#end  6 17:04:55.923: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:04:55.927:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:04:55.927: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:04:59.571: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:04:59.571: RIP: build update entries
+Nov  6 17:04:59.571: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:04:59.571: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:05:22.847: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:05:22.847:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:05:22.847: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:05:22.847:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:05:22.847: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:05:22.847:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:05:22.847: RT: updating rip 192.168.30.0/24 (0x0) via 10
+LIB-R1(config-if)#end.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:05:27.083: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:05:27.083: RIP: build update entries
+Nov  6 17:05:27.083: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#end
+LIB-R1#
+Nov  6 17:06:03.591: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/1
+LIB-R1(config-if)#no shutdown
+Nov  6 17:09:30.079: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:09:30.079:      10.0.12.0/30 via 0.0.0.0 in 2 hops
+Nov  6 17:09:30.079: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:09:30.079:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:09:30.079: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:09:30.079:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:09:30.079: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.
+LIB-R1(config-if)#no shutdown2 Gi0/0.13
+Nov  6 17:09:30.079:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:09:30.079: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#no shutdown
+Nov  6 17:09:38.387: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:09:38.387: RIP: build update entries
+Nov  6 17:09:38.387: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#no shutdown
+LIB-R1(config-if)#
+Nov  6 17:09:40.955: is_up: GigabitEthernet0/1 0 state: 5 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 17:09:42.911: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down
+LIB-R1(config-if)#
+Nov  6 17:09:42.911: is_up: GigabitEthernet0/1 0 state: 0 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 17:09:48.427: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+LIB-R1(config-if)#
+Nov  6 17:09:48.427: is_up: GigabitEthernet0/1 0 state: 4 sub state: 1 line: 1
+Nov  6 17:09:49.427: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+Nov  6 17:09:49.427: is_up: GigabitEthernet0/1 1 state: 4 sub state: 1 line: 1
+Nov  6 17:09:49.427: RT: updating connected 10.0.12.0/30 (0x0) via 0.0.0.0 Gi0/1
+Nov  6 17:09:49.427: RT: closer admin distance for 10.0.12.0, flushing 1 routes
+Nov  6 17:09:49.427: RT: add 10.0.12.0/30 via 0.0.0.0, connected metric [0/0
+LIB-R1(config-if)#]
+Nov  6 17:09:49.427: RT: interface GigabitEthernet0/1 added to routing table
+Nov  6 17:09:49.427: RIP: sending request on GigabitEthernet0/1 to 224.0.0.9
+Nov  6 17:09:49.427: RT: updating connected 10.0.12.1/32 (0x0) via 0.0.0.0 Gi0/1
+Nov  6 17:09:49.427: RT: add 10.0.12.1/32 via 0.0.0.0, connected metric [0/0]
+LIB-R1(config-if)#
+Nov  6 17:09:51.427: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:09:51.427: RIP: build flash update entries
+Nov  6 17:09:51.427: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:09:51.427: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:09:51.427: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#end
+Nov  6 17:09:57.855: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:09:57.855:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:09:57.855: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:09:57.855:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:09:57.855: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:09:57.855:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:09:57.855: RT: updating rip 192.168.30.0/24 (0x0) via 10
+LIB-R1(config-if)#end.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:10:03.323: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:10:03.323:      10.0.13.0/30 via 0.0.0.0 in 2 hops
+Nov  6 17:10:03.323: RT: updating rip 10.0.13.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:03.323: RT: rib update return code: 17
+Nov  6 17:10:03.323:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:10:03.323: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:03.323: RT: add 10.0.23.0/30 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:10:03.
+LIB-R1(config-if)#end323:      192.168.10.0/24 via 0.0.0.0 in 3 hops
+Nov  6 17:10:03.323: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:03.323: RT: rib update return code: 17
+Nov  6 17:10:03.323:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:10:03.323: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:03.323: RT: del 192.168.20.0/24 via 10.0.13.2, rip metric [120/2]
+Nov  6 17:10:03.323: RT: add 192.168.20.0/24 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:10:03.323:  
+LIB-R1(config-if)#end    192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:10:03.323: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:03.323: RT: rib update return code: 19
+LIB-R1(config-if)#end
+Nov  6 17:10:05.323: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:10:05.323: RIP: build flash update entries
+Nov  6 17:10:05.323: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 17:10:05.323: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:10:05.323: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#end
+Nov  6 17:10:07.383: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:10:07.383: RIP: build update entries
+Nov  6 17:10:07.383: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:07.383: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:07.383: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:10:16.279: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:10:16.279: RIP: build update entries
+Nov  6 17:10:16.279: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:16.279: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:16.279: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:10:26.183: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:10:26.183:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:10:26.183: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:10:26.183:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:10:26.183: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:10:26.183: RT: rib update return code: 19
+Nov  6 17:10:26.183:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:10:
+LIB-R1(config-if)#end26.183: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:10:30.447: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:10:30.447:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:10:30.447: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:30.447:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:10:30.447: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:30.447:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:10:30.447: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#endi0/1
+Nov  6 17:10:30.447: RT: rib update return code: 19
+LIB-R1(config-if)#end
+Nov  6 17:10:32.971: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:10:32.971: RIP: build update entries
+Nov  6 17:10:32.971: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:32.971: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:32.971: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:10:45.787: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:10:45.787: RIP: build update entries
+Nov  6 17:10:45.787: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:45.787: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:10:45.787: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:10:52.679: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:10:52.679:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:10:52.679: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:10:52.679:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:10:52.679: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:10:52.679: RT: rib update return code: 19
+Nov  6 17:10:52.679:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:10:
+LIB-R1(config-if)#end52.679: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:10:58.627: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:10:58.627:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:10:58.627: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:58.627:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:10:58.627: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:10:58.627:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:10:58.627: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#endi0/1
+Nov  6 17:10:58.627: RT: rib update return code: 19
+LIB-R1(config-if)#end
+Nov  6 17:11:01.691: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:11:01.691: RIP: build update entries
+Nov  6 17:11:01.691: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:11:01.691: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:11:01.691: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:11:12.375: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:11:12.375: RIP: build update entries
+Nov  6 17:11:12.375: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:11:12.375: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:11:12.375: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:11:21.591: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:11:21.591:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:11:21.591: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:11:21.591:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:11:21.591: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:11:21.591: RT: rib update return code: 19
+Nov  6 17:11:21.591:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:11:
+LIB-R1(config-if)#end21.591: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:11:25.659: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:11:25.659:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:11:25.659: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:11:25.659:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:11:25.659: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:11:25.659:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:11:25.659: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#endi0/1
+Nov  6 17:11:25.659: RT: rib update return code: 19
+LIB-R1(config-if)#end
+LIB-R1#
+Nov  6 17:12:09.863: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/1
+LIB-R1(config-if)#shutdown
+Nov  6 17:14:58.891: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:14:58.891: RIP: build update entries
+Nov  6 17:14:58.891: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:14:58.891: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:14:58.891: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#shutdown
+Nov  6 17:15:04.555: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:15:04.555:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:15:04.555: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:15:04.555:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:15:04.555: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:15:04.555: RT: rib update return code: 19
+Nov  6 17:15:04.555:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:15:
+LIB-R1(config-if)#shutdown04.555: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#shutdown
+Nov  6 17:15:10.119: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:15:10.119: RIP: build update entries
+Nov  6 17:15:10.119: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:15:10.119: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:15:10.119: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 17:15:10.591: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:15:10.591:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:15:10.591
+LIB-R1(config-if)#shutdown: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:15:10.591:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:15:10.591: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:15:10.591:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:15:10.591: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:15:10.591: RT: rib update return code: 19
+LIB-R1(config-if)#shutdown
+LIB-R1(config-if)#
+Nov  6 17:15:14.475: is_up: GigabitEthernet0/1 0 state: 6 sub state: 1 line: 0
+Nov  6 17:15:14.475: RT: del 10.0.23.0 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:15:14.475: RT: del 192.168.20.0 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:15:14.475: RT: delete network route to 192.168.20.0/24
+Nov  6 17:15:14.475: RT: interface GigabitEthernet0/1 removed from routing table
+Nov  6 17:15:14.475: RT: del 10.0.12.0 via 0.0.0.0, connected metric [0/0]
+Nov  6 17:15:14.475: RT: delete subnet route to 10.0.1
+LIB-R1(config-if)#2.0/30
+Nov  6 17:15:14.475: RT: delete route to 10.0.12.1 via 0.0.0.0, GigabitEthernet0/1
+Nov  6 17:15:14.475: RT: no routes to 10.0.12.1, flushing
+Nov  6 17:15:16.475: %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to administratively down
+LIB-R1(config-if)#
+Nov  6 17:15:16.475: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:15:16.475: RIP: build flash update entries
+Nov  6 17:15:16.475: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:15:16.475: 192.168.20.0/24 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:15:16.475: is_up: GigabitEthernet0/1 0 state: 6 sub state: 1 line: 0
+Nov  6 17:15:17.475: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+Nov  6 17:15:17.475: is_up
+LIB-R1(config-if)#: GigabitEthernet0/1 0 state: 6 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 17:15:27.639: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:15:27.639:      10.0.12.0/30 via 0.0.0.0 in 16 hops  (inaccessible)
+Nov  6 17:15:27.639: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:15:27.639: RT: rib update return code: 5
+LIB-R1(config-if)#end
+Nov  6 17:15:31.323: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:15:31.323:      10.0.12.0/30 via 0.0.0.0 in 16 hops  (inaccessible)
+Nov  6 17:15:31.323: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:15:31.323: RT: rib update return code: 5
+Nov  6 17:15:31.323:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:15:31.323: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:15:31.323:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov
+LIB-R1(config-if)#end  6 17:15:31.323: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:15:31.323: RT: add 192.168.20.0/24 via 10.0.13.2, rip metric [120/2]
+Nov  6 17:15:31.323:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:15:31.323: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:15:33.323: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:15:33.323: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#end
+Nov  6 17:15:37.383: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:15:37.383: RIP: build update entries
+Nov  6 17:15:37.383: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:15:37.383: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:16:00.331: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:16:00.331:      10.0.12.0/30 via 0.0.0.0 in 16 hops  (inaccessible)
+Nov  6 17:16:00.331: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:00.331: RT: rib update return code: 5
+Nov  6 17:16:00.331:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:16:00.331: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:00.331:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov
+LIB-R1(config-if)#end  6 17:16:00.331: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:00.331:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:16:00.331: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:16:04.535: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:16:04.535: RIP: build update entries
+Nov  6 17:16:04.535: 10.0.12.0/30 via 0.0.0.0, metric 16, tag 0
+Nov  6 17:16:04.535: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:16:30.303: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:16:30.303:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:16:30.303: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:30.303:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:16:30.303: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:30.303:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:16:30.303: RT: updating rip 192.168.30.0/24 (0x0) via 10
+LIB-R1(config-if)#end.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+Nov  6 17:16:33.591: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:16:33.591: RIP: build update entries
+Nov  6 17:16:33.591: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#end
+Nov  6 17:16:58.711: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:16:58.711:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:16:58.711: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:58.711:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:16:58.711: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:16:58.711:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:16:58.711: RT: updating rip 192.168.30.0/24 (0x0) via 10
+LIB-R1(config-if)#end.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+LIB-R1#
+Nov  6 17:17:42.051: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/1
+LIB-R1(config-if)#no shutdown
+Nov  6 17:21:38.939: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:21:38.939:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:21:38.939:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:21:38.939:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+LIB-R1(config-if)#no shutdown
+Nov  6 17:24:00.423: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:24:00.423:      10.0.12.0/30 via 0.0.0.0 in 2 hops
+Nov  6 17:24:00.423: RT: updating rip 10.0.12.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:00.423:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:24:00.423: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:00.423:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:24:00.423: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.
+LIB-R1(config-if)#no shutdown2 Gi0/0.13
+Nov  6 17:24:00.423:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:24:00.423: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:00.871: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:24:00.871: RIP: build update entries
+Nov  6 17:24:00.871: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#no shutdown
+LIB-R1(config-if)#
+Nov  6 17:24:07.583: is_up: GigabitEthernet0/1 0 state: 5 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 17:24:09.543: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down
+LIB-R1(config-if)#
+Nov  6 17:24:09.543: is_up: GigabitEthernet0/1 0 state: 0 sub state: 1 line: 0
+LIB-R1(config-if)#
+Nov  6 17:24:12.427: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+LIB-R1(config-if)#
+Nov  6 17:24:12.427: is_up: GigabitEthernet0/1 0 state: 4 sub state: 1 line: 1
+Nov  6 17:24:13.427: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+Nov  6 17:24:13.427: is_up: GigabitEthernet0/1 1 state: 4 sub state: 1 line: 1
+Nov  6 17:24:13.427: RT: updating connected 10.0.12.0/30 (0x0) via 0.0.0.0 Gi0/1
+Nov  6 17:24:13.427: RT: closer admin distance for 10.0.12.0, flushing 1 routes
+Nov  6 17:24:13.427: RT: add 10.0.12.0/30 via 0.0.0.0, connected metric [0/0
+LIB-R1(config-if)#]
+Nov  6 17:24:13.427: RT: interface GigabitEthernet0/1 added to routing table
+Nov  6 17:24:13.427: RIP: sending request on GigabitEthernet0/1 to 224.0.0.9
+Nov  6 17:24:13.427: RT: updating connected 10.0.12.1/32 (0x0) via 0.0.0.0 Gi0/1
+Nov  6 17:24:13.427: RT: add 10.0.12.1/32 via 0.0.0.0, connected metric [0/0]
+LIB-R1(config-if)#
+Nov  6 17:24:15.427: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:24:15.427: RIP: build flash update entries
+Nov  6 17:24:15.427: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:24:15.427: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:24:15.427: RIP: build flash update entries - suppressing null update
+LIB-R1(config-if)#
+Nov  6 17:24:28.775: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:24:28.775:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:24:28.775: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:28.775:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:24:28.775: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:28.775:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:24:28.775: RT: updating rip 192.168.30.0/24 (0x0) via 10
+LIB-R1(config-if)#.0.13.2 Gi0/0.13
+Nov  6 17:24:29.671: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:24:29.671: RIP: build update entries
+Nov  6 17:24:29.671: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:24:29.671: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+LIB-R1(config-if)#
+Nov  6 17:24:37.495: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:24:37.495:      10.0.13.0/30 via 0.0.0.0 in 2 hops
+Nov  6 17:24:37.495: RT: updating rip 10.0.13.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:24:37.495: RT: rib update return code: 17
+Nov  6 17:24:37.495:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:24:37.495: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:24:37.495: RT: add 10.0.23.0/30 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:24:37.
+LIB-R1(config-if)#499:      192.168.10.0/24 via 0.0.0.0 in 3 hops
+Nov  6 17:24:37.499: RT: updating rip 192.168.10.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:24:37.499: RT: rib update return code: 17
+Nov  6 17:24:37.499:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:24:37.499: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:24:37.499: RT: del 192.168.20.0/24 via 10.0.13.2, rip metric [120/2]
+Nov  6 17:24:37.499: RT: add 192.168.20.0/24 via 10.0.12.2, rip metric [120/1]
+Nov  6 17:24:37.499:  
+LIB-R1(config-if)#    192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:24:37.499: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:24:37.499: RT: rib update return code: 19
+LIB-R1(config-if)#
+Nov  6 17:24:39.499: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:24:39.499: RIP: build flash update entries
+Nov  6 17:24:39.499: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 17:24:39.499: RIP: sending v2 flash update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:24:39.499: RIP: build flash update entries - suppressing null update
+Nov  6 17:24:40.403: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:24:
+LIB-R1(config-if)#40.403: RIP: build update entries
+Nov  6 17:24:40.403: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:24:40.403: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:24:40.403: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 17:24:56.663: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:24:56.663:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:24:56.663: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:56.663:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:24:56.663: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:56.663: RT: rib update return code: 19
+Nov  6 17:24:56.663:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:24:
+LIB-R1(config-if)#56.663: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:24:58.107: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:24:58.107: RIP: build update entries
+Nov  6 17:24:58.107: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:24:58.107: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:24:58.107: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 17:25:04.183: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:25:04.183:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:25:04.183: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:25:04.183:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:25:04.183: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:25:04.183:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:25:04.187: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#i0/1
+Nov  6 17:25:04.187: RT: rib update return code: 19
+LIB-R1(config-if)#
+Nov  6 17:25:08.771: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:25:08.771: RIP: build update entries
+Nov  6 17:25:08.771: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:08.771: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:08.771: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 17:25:24.155: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:25:24.155:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:25:24.155: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:25:24.155:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:25:24.155: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:25:24.155: RT: rib update return code: 19
+Nov  6 17:25:24.155:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:25:
+LIB-R1(config-if)#24.155: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#
+Nov  6 17:25:26.291: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:25:26.291: RIP: build update entries
+Nov  6 17:25:26.291: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:26.291: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:26.291: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 17:25:31.435: RIP: received v2 update from 10.0.12.2 on GigabitEthernet0/1
+Nov  6 17:25:31.435:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:25:31.435: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:25:31.435:      192.168.20.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:25:31.435: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.12.2 Gi0/1
+Nov  6 17:25:31.435:      192.168.30.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:25:31.439: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.12.2 G
+LIB-R1(config-if)#i0/1
+Nov  6 17:25:31.439: RT: rib update return code: 19
+LIB-R1(config-if)#
+Nov  6 17:25:37.135: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/1 (10.0.12.1)
+Nov  6 17:25:37.135: RIP: build update entries
+Nov  6 17:25:37.135: 10.0.13.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:37.135: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:37.135: 192.168.30.0/24 via 0.0.0.0, metric 2, tag 0
+LIB-R1(config-if)#
+Nov  6 17:25:52.887: RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0.13 (10.0.13.1)
+Nov  6 17:25:52.887: RIP: build update entries
+Nov  6 17:25:52.887: 10.0.12.0/30 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:52.887: 192.168.10.0/24 via 0.0.0.0, metric 1, tag 0
+Nov  6 17:25:52.887: 192.168.20.0/24 via 0.0.0.0, metric 2, tag 0
+Nov  6 17:25:53.827: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 17:25:53.827:      10.0.23.0/30 via 0.0.0.0 in 1 hops
+Nov  6 17:25:53.
+LIB-R1(config-if)#827: RT: updating rip 10.0.23.0/30 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:25:53.827:      192.168.20.0/24 via 0.0.0.0 in 2 hops
+Nov  6 17:25:53.827: RT: updating rip 192.168.20.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+Nov  6 17:25:53.827: RT: rib update return code: 19
+Nov  6 17:25:53.827:      192.168.30.0/24 via 0.0.0.0 in 1 hops
+Nov  6 17:25:53.827: RT: updating rip 192.168.30.0/24 (0x0) via 10.0.13.2 Gi0/0.13
+LIB-R1(config-if)#end
+LIB-R1#
+Nov  6 17:28:46.171: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gu i0/0.13
+LIB-R1(config-subif)#shutdown
+LIB-R1(config-subif)#end
+LIB-R1#
+Nov  6 17:33:04.199: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/0.13
+LIB-R1(config-subif)#no shutdown
+LIB-R1(config-subif)#end
+LIB-R1#
+Nov  6 17:34:14.215: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/0/1  .13
+LIB-R1(config-subif)#shutdown
+LIB-R1(config-subif)#end
+LIB-R1#
+Nov  6 17:39:36.779: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#in
+Nov  6 17:40:47.271: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (192.168.30.20)
+LIB-R1(config)#int gi0/0.13
+LIB-R1(config-subif)#no shutdown
+LIB-R1(config-subif)#end
+LIB-R1#
+Nov  6 17:40:59.575: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#^Z
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int gi0/0.13
+LIB-R1(config-subif)#shutdown
+LIB-R1(config-subif)#no shutdown
+LIB-R1(config-subif)#end
+LIB-R1#
+Nov  6 17:45:32.895: %SYS-5-CONFIG_I: Configured from console by console
+LIB-R1#

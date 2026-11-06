@@ -1,0 +1,65 @@
+! Debug-convergence lines for T1 to T4, copied verbatim from the run_experiment.py
+! output (Window A) that was pasted during the lab session on 6 Nov 2026.
+!
+! Why this file exists: the data/debug_logs/ folder was deleted on the laptop
+! at about 18:53, after T1-T4 had finished (only T5 runs 1-3 remain as full
+! captures; T5-run1 is a partial recovery). The runner printed these lines
+! from each original capture before it was deleted. Raw router lines for the
+! runs where the console was on the measured router are recovered separately
+! from data/console_logs/ (see the *_LIB-R1.txt / *_TCH-R2.txt files here).
+!
+! Format per run: the [5/6] lines exactly as printed.
+! Note T1-run1: printed before the parser fix that starts at the first 'RT: del'
+! (5.108 s from %LINK); the corrected value from the raw lines is 7.104 s.
+
+T1-run1  (LIB-R1)  Debug start: 16:25:30.219  link         GigabitEthernet0/1 administratively down
+T1-run1  (LIB-R1)  Debug end:   16:25:35.327  route_add    192.168.20.0/24 via 10.0.13.2 metric 2
+T1-run1  (LIB-R1)  Debug convergence: 5.108 s   [corrected: 7.104 s from RT: del at 16:25:28.223]
+
+T1-run2  (LIB-R1)  Debug start: 16:49:57.547  route_delete 10.0.23.0 via 10.0.12.2
+T1-run2  (LIB-R1)  Debug end:   16:50:03.183  route_add    192.168.20.0/24 via 10.0.13.2 metric 2
+T1-run2  (LIB-R1)  Debug convergence: 5.636 s
+
+T1-run3  (LIB-R1)  Debug start: 17:03:59.243  route_delete 10.0.23.0 via 10.0.12.2
+T1-run3  (LIB-R1)  Debug end:   17:04:03.895  route_add    192.168.20.0/24 via 10.0.13.2 metric 2
+T1-run3  (LIB-R1)  Debug convergence: 4.652 s
+
+T1-run4  (LIB-R1)  Debug start: 17:15:14.475  route_delete 10.0.23.0 via 10.0.12.2
+T1-run4  (LIB-R1)  Debug end:   17:15:31.323  route_add    192.168.20.0/24 via 10.0.13.2 metric 2
+T1-run4  (LIB-R1)  Debug convergence: 16.848 s
+
+T4-run1  (LIB-R1)  Debug start: 16:58:01.743  link         GigabitEthernet0/1 down
+T4-run1  (LIB-R1)  Debug end:   16:58:19.303  route_add    192.168.20.0/24 via 10.0.12.2 metric 1
+T4-run1  (LIB-R1)  Debug convergence: 17.560 s
+
+T4-run2  (LIB-R1)  Debug start: 17:09:42.911  link         GigabitEthernet0/1 down
+T4-run2  (LIB-R1)  Debug end:   17:10:03.323  route_add    192.168.20.0/24 via 10.0.12.2 metric 1
+T4-run2  (LIB-R1)  Debug convergence: 20.412 s
+
+T4-run3  (LIB-R1)  Debug start: 17:24:09.543  link         GigabitEthernet0/1 down
+T4-run3  (LIB-R1)  Debug end:   17:24:37.499  route_add    192.168.20.0/24 via 10.0.12.2 metric 1
+T4-run3  (LIB-R1)  Debug convergence: 27.956 s
+
+T2-run1  (LAB-R3)  Debug start: 17:31:25.011  route_delete 10.0.12.0 via 10.0.13.1
+T2-run1  (LAB-R3)  Debug end:   17:31:41.479  route_add    192.168.10.0/24 via 10.0.23.1 metric 2
+T2-run1  (LAB-R3)  Debug convergence: 16.468 s
+
+T2-run2  (LAB-R3)  Debug start: 17:37:58.355  route_delete 10.0.12.0 via 10.0.13.1
+T2-run2  (LAB-R3)  Debug end:   17:38:17.471  route_add    192.168.10.0/24 via 10.0.23.1 metric 2
+T2-run2  (LAB-R3)  Debug convergence: 19.116 s
+
+T2-run3  (LAB-R3)  Debug start: 17:43:46.803  route_delete 10.0.12.0 via 10.0.13.1
+T2-run3  (LAB-R3)  Debug end:   17:44:13.839  route_add    192.168.10.0/24 via 10.0.23.1 metric 2
+T2-run3  (LAB-R3)  Debug convergence: 27.036 s
+
+T3-run1  (TCH-R2)  Debug start: 18:07:48.051  route_delete 10.0.13.0 via 10.0.23.2
+T3-run1  (TCH-R2)  Debug end:   18:07:57.255  route_add    192.168.30.0/24 via 10.0.12.1 metric 2
+T3-run1  (TCH-R2)  Debug convergence: 9.204 s
+
+T3-run2  (TCH-R2)  Debug start: 18:17:55.135  route_delete 10.0.13.0 via 10.0.23.2
+T3-run2  (TCH-R2)  Debug end:   18:18:12.063  route_add    192.168.30.0/24 via 10.0.12.1 metric 2
+T3-run2  (TCH-R2)  Debug convergence: 16.928 s
+
+T3-run3  (TCH-R2)  Debug start: 18:25:56.691  route_delete 10.0.13.0 via 10.0.23.2
+T3-run3  (TCH-R2)  Debug end:   18:26:08.055  route_add    192.168.30.0/24 via 10.0.12.1 metric 2
+T3-run3  (TCH-R2)  Debug convergence: 11.364 s

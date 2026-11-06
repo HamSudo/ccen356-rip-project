@@ -1,0 +1,58 @@
+=~=~=~=~=~=~=~=~=~=~=~= PuTTY log 2026.11.06 15:38:18 =~=~=~=~=~=~=~=~=~=~=~=
+ SW-LIB - Library switch. Authorized access only. 
+
+User Access Verification
+
+Username: admin
+Password: 
+SW-LIB#terminal length 0
+SW-LIB#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/1
+10   LIB-LAN                          active    Fa0/1, Fa0/2, Fa0/3, Fa0/4, Fa0/5, Fa0/6
+13   WAN-LIB-LAB                      active    Fa0/8
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+SW-LIB#show interfaces trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Fa0/7       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Fa0/7       10,13
+
+Port        Vlans allowed and active in management domain
+Fa0/7       10,13
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/7       10,13
+SW-LIB#show interfaces status
+
+Port      Name               Status       Vlan       Duplex  Speed Type
+Fa0/1     Library end device connected    10         a-full  a-100 10/100BaseTX
+Fa0/2     Library end device notconnect   10           auto   auto 10/100BaseTX
+Fa0/3     Library end device notconnect   10           auto   auto 10/100BaseTX
+Fa0/4     Library end device notconnect   10           auto   auto 10/100BaseTX
+Fa0/5     Library end device notconnect   10           auto   auto 10/100BaseTX
+Fa0/6     Library end device notconnect   10           auto   auto 10/100BaseTX
+Fa0/7     Trunk to LIB-R1 G0 connected    trunk      a-full  a-100 10/100BaseTX
+Fa0/8     WAN VLAN 13 - to L connected    13         a-full  a-100 10/100BaseTX
+Gi0/1                        notconnect   1            auto   auto Not Present
+SW-LIB#show cdp neighbors
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port Mac Relay 
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+LIB-R1.school.local
+                 Fas 0/7           142             R S I  CISCO2901 Gig 0/0
+LAB-R3.school.local
+                 Fas 0/8           178             R S I  CISCO2901 Gig 0/1
+SW-LIB#show ip interface brief | include Vlan
+Vlan1                  unassigned      YES unset  up                    down    
+Vlan10                 192.168.10.2    YES manual up                    up      
+SW-LIB#

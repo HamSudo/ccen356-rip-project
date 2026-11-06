@@ -1,8 +1,11 @@
 ! ============================================================
-! SW-TCH - Teachers' room switch (Cisco 2960)
-! CCEN 356 Project 1 - RIPv2 school network
-! Ports: Gi0/1 uplink to TCH-R2 | Fa0/1 PC-TCH-1 | Fa0/2 PC-TCH-2
-!        Fa0/3 Laptop-TCH-1 | Fa0/4 Printer-TCH
+! SW-TCH - Teachers' room switch (Cisco Catalyst 3560-8PC)
+! CCEN 356 Project 1 - RIPv2 school network, all-Ethernet design
+!
+! Ports:
+!   Fa0/7        trunk to TCH-R2 G0/0 (VLAN 20 LAN + VLAN 12 WAN)
+!   Fa0/8        access VLAN 12, to LIB-R1 G0/1 (the LIB-TCH WAN link)
+!   Fa0/1 - 6    access VLAN 20: PC-TCH-1, PC-TCH-2, Laptop-TCH-1, Printer-TCH
 !
 ! NOTE: this is a paste-in script (what gets typed into a blank device),
 ! not an export from the built network. The brief's ".txt exports from
@@ -19,28 +22,54 @@ service password-encryption
 enable secret class123
 banner motd # SW-TCH - Teachers room switch. Authorized access only. #
 !
-interface GigabitEthernet0/1
- description Uplink to TCH-R2 G0/0
+! ---------- VLANs ----------
+vlan 20
+ name TCH-LAN
  exit
-interface range FastEthernet0/1 - 4
- description Teachers room end devices
+vlan 12
+ name WAN-LIB-TCH
+ exit
+!
+! ---------- Router ports ----------
+! portfast on every router port: without it a port that comes back up
+! (T4) waits 30 s in spanning-tree before forwarding, which would be
+! counted as RIP convergence time.
+interface FastEthernet0/7
+ description Trunk to TCH-R2 G0/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 12,20
+ switchport mode trunk
+ switchport nonegotiate
+ spanning-tree portfast trunk
+ exit
+interface FastEthernet0/8
+ description WAN VLAN 12 - to LIB-R1 G0/1
  switchport mode access
+ switchport access vlan 12
  spanning-tree portfast
  exit
 !
-! ---------- Management IP ----------
-interface Vlan1
+! ---------- End devices ----------
+interface range FastEthernet0/1 - 6
+ description Teachers room end devices
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast
+ exit
+!
+! ---------- Management IP (in the LAN VLAN) ----------
+interface Vlan20
  ip address 192.168.20.2 255.255.255.0
  no shutdown
  exit
 ip default-gateway 192.168.20.1
 !
-! ---------- SSH ----------
+! ---------- Remote login ----------
+! Telnet, not SSH: the switches run the C3560-IPBASE image, which has no
+! crypto, so "crypto key" and "ip ssh" are rejected. The Python scripts only
+! SSH to the routers; the switches are managed from the console.
 ip domain-name school.local
 username admin privilege 15 secret Admin@123
-! If the switch asks "How many bits in the modulus", type 1024
-crypto key generate rsa general-keys modulus 1024
-ip ssh version 2
 !
 line console 0
  password cisco
@@ -49,7 +78,7 @@ line console 0
  exit
 line vty 0 15
  login local
- transport input ssh
+ transport input telnet
  exit
 !
 end

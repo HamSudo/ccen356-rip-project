@@ -1,0 +1,5 @@
+! Restore after T2: bring LAB-R3's end of the Library-Lab link back.
+! First 'no shutdown' LIB-R1 G0/0.13 on its console, then push this to LAB-R3
+! with --no-save.
+interface GigabitEthernet0/1
+ no shutdown

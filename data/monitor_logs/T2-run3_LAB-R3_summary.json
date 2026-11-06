@@ -1,0 +1,56 @@
+{
+  "label": "T2-run3",
+  "router": "LAB-R3",
+  "source": "live",
+  "networks": "all",
+  "target": "192.168.10.0/24",
+  "expect_metric": 2,
+  "expect_next_hop": "10.0.23.1",
+  "stable_for_s": 35.0,
+  "interval_target_s": 1.0,
+  "started": "2026-11-06T17:43:22.966",
+  "ended": "2026-11-06T17:44:53.837",
+  "interrupted": false,
+  "marks": [
+    {
+      "time": "2026-11-06T17:43:43.598",
+      "text": "failure applied"
+    }
+  ],
+  "first_change": {
+    "obs_time": "2026-11-06T17:43:47.910",
+    "since_mark_s": 4.312,
+    "window_s": 1.091,
+    "network": "192.168.10.0/24",
+    "event": "route_lost",
+    "after": ""
+  },
+  "converged": {
+    "obs_time": "2026-11-06T17:44:14.907",
+    "since_mark_s": 31.309,
+    "window_s": null,
+    "network": "192.168.10.0/24",
+    "event": "converged",
+    "after": "via 10.0.23.1 (GigabitEthernet0/0.23) m2"
+  },
+  "target_met_at_start": false,
+  "final_state": {
+    "10.0.12.0/30": "via 10.0.23.1 (GigabitEthernet0/0.23) m1",
+    "192.168.10.0/24": "via 10.0.23.1 (GigabitEthernet0/0.23) m2",
+    "192.168.20.0/24": "via 10.0.23.1 (GigabitEthernet0/0.23) m1"
+  },
+  "polls": 90,
+  "polls_ok": 90,
+  "polls_failed": 0,
+  "poll_interval_mean_s": 1.0,
+  "poll_interval_max_s": 1.016,
+  "poll_duration_mean_s": 0.083,
+  "poll_duration_max_s": 0.094,
+  "polls_slower_than_interval": 0,
+  "session_gaps": [],
+  "files": {
+    "events": "D:\\ccen356-rip-project\\data\\monitor_logs\\T2-run3_LAB-R3.csv",
+    "polls": "D:\\ccen356-rip-project\\data\\monitor_logs\\T2-run3_LAB-R3_polls.csv"
+  },
+  "time_note": "obs_time = laptop clock when the change was SEEN; the change happened inside [window_start, obs_time]. Marks are operator key presses, not router events."
+}

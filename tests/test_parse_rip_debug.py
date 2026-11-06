@@ -79,6 +79,33 @@ def test_t1_convergence_measured_from_link_down_to_route_install():
     assert result["seconds"] == pytest.approx(4.894)
 
 
+# Real lines from the lab (T1 run 1, LIB-R1, 6 Nov): IOS deleted the routes the
+# moment 'shutdown' was entered, but logged %LINK about 2 s later.
+LAB_T1_LOG = """\
+Nov  6 16:25:28.223: RT: del 192.168.20.0 via 10.0.12.2, rip metric [120/1]
+Nov  6 16:25:28.223: RT: delete network route to 192.168.20.0/24
+Nov  6 16:25:30.219: %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to administratively down
+Nov  6 16:25:31.219: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+Nov  6 16:25:35.327: RT: add 192.168.20.0/24 via 10.0.13.2, rip metric [120/2]
+"""
+
+
+def test_shutdown_measured_from_the_route_delete_not_the_late_link_line():
+    result = convergence(parse_debug(LAB_T1_LOG), "192.168.20.0/24", 2)
+    assert result["start"]["kind"] == "route_delete"
+    assert result["seconds"] == pytest.approx(7.104)
+
+
+def test_link_up_has_no_earlier_delete_and_keeps_the_link_line():
+    t4 = """\
+Nov  6 16:30:00.000: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+Nov  6 16:30:03.500: RT: add 192.168.20.0/24 via 10.0.12.2, rip metric [120/1]
+"""
+    result = convergence(parse_debug(t4), "192.168.20.0/24", 1)
+    assert result["start"]["kind"] == "link"
+    assert result["seconds"] == pytest.approx(3.5)
+
+
 def test_t5_convergence_measured_from_last_update_heard():
     result = convergence(parse_debug(T5_LOG), "192.168.30.0/24", 2, silent_peer="10.0.13.2")
     assert result["start"]["peer"] == "10.0.13.2"

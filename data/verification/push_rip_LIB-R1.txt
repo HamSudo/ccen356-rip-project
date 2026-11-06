@@ -1,0 +1,23 @@
+6 commands from configs/push/rip-LIB-R1.txt:
+    router rip
+     version 2
+     no auto-summary
+     network 10.0.0.0
+     network 192.168.10.0
+     passive-interface GigabitEthernet0/0.10
+
+=== LIB-R1 ===
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#router rip
+LIB-R1(config-router)# version 2
+LIB-R1(config-router)# no auto-summary
+LIB-R1(config-router)# network 10.0.0.0
+LIB-R1(config-router)# network 192.168.10.0
+LIB-R1(config-router)# passive-interface GigabitEthernet0/0.10
+LIB-R1(config-router)#end
+LIB-R1#
+write mem
+Building configuration...
+[OK]
+LIB-R1#

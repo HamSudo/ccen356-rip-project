@@ -1,0 +1,52 @@
+Incident during the T3 tests, 6 Nov 2026 (TCH-R2 clock ~18:20-18:23)
+=====================================================================
+
+What happened: about a minute after T3-run2 finished (its after-snapshot was
+still normal), the cable TCH-R2 G0/0 <-> SW-TCH Fa0/7 came loose (physical
+'down', not 'administratively down'). TCH-R2 lost its trunk, so its LAN
+192.168.20.0/24 and its link to LIB-R1 (G0/0.12) went down. The same cable had
+come loose once before, earlier the same day.
+
+Why it is worth keeping: TCH-R2 then learned a route to its OWN LAN back from
+LAB-R3 at metric 3. LIB-R1 still advertised a stale 192.168.20.0/24 (its route
+had not yet hit the 180 s invalid timer), LAB-R3 passed it on with metric 2,
+and TCH-R2 accepted it at metric 3: the start of a count-to-infinity loop,
+which RIP only stops at metric 16 (or via timers / poisoning). Evidence for
+report section 7 (Limitations of RIP).
+
+Read via SSH LAB-R3 -> TCH-R2 (10.0.23.1), read-only:
+
+TCH-R2# show ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         unassigned      YES manual down                  down
+GigabitEthernet0/0.12      10.0.12.2       YES manual down                  down
+GigabitEthernet0/0.20      192.168.20.1    YES manual down                  down
+GigabitEthernet0/1         10.0.23.1       YES manual up                    up
+
+TCH-R2# show logging | include LINK|LINEPROTO
+Nov  6 18:17:57.135: %LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to administratively down
+Nov  6 18:17:58.135: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+Nov  6 18:20:05.771: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to down
+Nov  6 18:20:06.771: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to down
+Nov  6 18:20:39.471: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down
+Nov  6 18:20:42.771: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+Nov  6 18:20:43.771: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+
+TCH-R2# show ip route rip | begin Gateway
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+R        10.0.12.0/30 [120/2] via 10.0.23.2, 00:00:16, GigabitEthernet0/1
+R        10.0.13.0/30 [120/1] via 10.0.23.2, 00:00:16, GigabitEthernet0/1
+R     192.168.10.0/24 [120/2] via 10.0.23.2, 00:00:16, GigabitEthernet0/1
+R     192.168.20.0/24 [120/3] via 10.0.23.2, 00:00:16, GigabitEthernet0/1    <-- its own LAN, via LAB-R3
+R     192.168.30.0/24 [120/1] via 10.0.23.2, 00:00:16, GigabitEthernet0/1
+
+At the same time, from LIB-R1:  ping 192.168.20.1 -> 0/3 (its route to
+192.168.20.0/24 via 10.0.12.2 was stale: the next hop's trunk was down).
+
+After the cable was replaced (all interfaces up again), LIB-R1 still showed
+  R  192.168.20.0/24 is possibly down
+i.e. the route had passed the 180 s invalid timer and was in hold-down, so
+LIB-R1 kept distrusting it for a while even though TCH-R2 was back. A second
+real example of RIP's timers delaying recovery.

@@ -26,7 +26,9 @@ from visualize import (
 def test_experiment_definitions_match_team_plan_v3():
     assert get_experiment("t1").router == "LIB-R1"
     assert get_experiment("T1").network == "192.168.20.0/24" and get_experiment("T1").metric == 2
-    assert get_experiment("T2").network == "192.168.30.0/24" and get_experiment("T2").metric == 2
+    # All-Ethernet design: T2 is measured on LAB-R3, whose end of the link is a physical port
+    assert get_experiment("T2").router == "LAB-R3"
+    assert get_experiment("T2").network == "192.168.10.0/24" and get_experiment("T2").next_hop == "10.0.23.1"
     assert get_experiment("T3").router == "TCH-R2" and get_experiment("T3").metric == 2
     assert get_experiment("T4").metric == 1 and get_experiment("T4").before_metric == 2
     assert get_experiment("T5").silent_peer == "10.0.13.2" and get_experiment("T5").duration >= 300

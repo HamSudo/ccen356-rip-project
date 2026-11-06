@@ -1,0 +1,117 @@
+Building configuration...
+
+Current configuration : 2190 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW-TCH
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$KKZp$v9XMfO6BDcfqNkTjLgrjt0
+!
+username admin privilege 15 secret 5 $1$MPlV$skbv8U0rqWVdUkcwjBvab1
+no aaa new-model
+system mtu routing 1500
+ip subnet-zero
+no ip domain-lookup
+ip domain-name school.local
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface FastEthernet0/1
+ description Teachers room end devices
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/2
+ description Teachers room end devices
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/3
+ description Teachers room end devices
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/4
+ description Teachers room end devices
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/5
+ description Teachers room end devices
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/6
+ description Teachers room end devices
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/7
+ description Trunk to TCH-R2 G0/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 12,20
+ switchport mode trunk
+ switchport nonegotiate
+ spanning-tree portfast trunk
+!
+interface FastEthernet0/8
+ description WAN VLAN 12 - to LIB-R1 G0/1
+ switchport access vlan 12
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet0/1
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan20
+ ip address 192.168.20.2 255.255.255.0
+!
+ip default-gateway 192.168.20.1
+ip classless
+ip http server
+!
+!
+control-plane
+!
+banner motd ^C SW-TCH - Teachers room switch. Authorized access only. ^C
+!
+line con 0
+ password 7 02050D480809
+ logging synchronous
+ login
+line vty 0 4
+ login local
+ transport input telnet
+line vty 5 15
+ login local
+ transport input telnet
+!
+end

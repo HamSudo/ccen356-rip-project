@@ -1,0 +1,11 @@
+{
+  "router": "TCH-R2",
+  "label": "T3-run1",
+  "mode": "recovered-from-console-log",
+  "source": "measured",
+  "capture_file": "data\\debug_logs\\T3-run1_TCH-R2.txt",
+  "recovered_from": [
+    "data/console_logs/Console-COM8-20261106-175430.log"
+  ],
+  "window": "18:07:16 to 18:09:05"
+}

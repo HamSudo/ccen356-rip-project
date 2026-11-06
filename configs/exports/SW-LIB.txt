@@ -1,0 +1,117 @@
+Building configuration...
+
+Current configuration : 2148 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW-LIB
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$GhL7$VqvX6Vu4ckedcD8Wd/NLF/
+!
+username admin privilege 15 secret 5 $1$9mQ4$IkcdI.Wao.fagtc.PqNWK0
+no aaa new-model
+system mtu routing 1500
+ip subnet-zero
+no ip domain-lookup
+ip domain-name school.local
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface FastEthernet0/1
+ description Library end devices
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/2
+ description Library end devices
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/3
+ description Library end devices
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/4
+ description Library end devices
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/5
+ description Library end devices
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/6
+ description Library end devices
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/7
+ description Trunk to LIB-R1 G0/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,13
+ switchport mode trunk
+ switchport nonegotiate
+ spanning-tree portfast trunk
+!
+interface FastEthernet0/8
+ description WAN VLAN 13 - to LAB-R3 G0/1
+ switchport access vlan 13
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet0/1
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan10
+ ip address 192.168.10.2 255.255.255.0
+!
+ip default-gateway 192.168.10.1
+ip classless
+ip http server
+!
+!
+control-plane
+!
+banner motd ^C SW-LIB - Library switch. Authorized access only. ^C
+!
+line con 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+line vty 0 4
+ login local
+ transport input telnet
+line vty 5 15
+ login local
+ transport input telnet
+!
+end

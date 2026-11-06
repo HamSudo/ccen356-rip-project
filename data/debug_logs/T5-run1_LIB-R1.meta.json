@@ -1,0 +1,8 @@
+{
+  "router": "LIB-R1",
+  "label": "T5-run1",
+  "mode": "partial-recovery",
+  "source": "measured",
+  "capture_file": "data\\debug_logs\\T5-run1_LIB-R1.txt",
+  "note": "original capture deleted during the session; 4 key lines recovered verbatim from an earlier read of the file"
+}

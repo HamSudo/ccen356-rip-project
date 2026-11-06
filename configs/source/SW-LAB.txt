@@ -1,8 +1,12 @@
 ! ============================================================
-! SW-LAB - Laboratory switch (Cisco 2960)
-! CCEN 356 Project 1 - RIPv2 school network
-! Ports: Gi0/1 uplink to LAB-R3 | Fa0/1 PC-LAB-1 | Fa0/2 PC-LAB-2
-!        Fa0/3 PC-LAB-3 | Fa0/4 Printer-LAB | Fa0/5 AUTO-PC (Python)
+! SW-LAB - Laboratory switch (Cisco Catalyst 3560-8PC)
+! CCEN 356 Project 1 - RIPv2 school network, all-Ethernet design
+!
+! Ports:
+!   Fa0/7        trunk to LAB-R3 G0/0 (VLAN 30 LAN + VLAN 23 WAN)
+!   Fa0/8        access VLAN 23, to TCH-R2 G0/1 (the TCH-LAB WAN link)
+!   Fa0/1 - 6    access VLAN 30: PC-LAB-1, PC-LAB-2, PC-LAB-3, Printer-LAB,
+!                AUTO-PC (Fa0/5, runs the Python scripts)
 !
 ! NOTE: this is a paste-in script (what gets typed into a blank device),
 ! not an export from the built network. The brief's ".txt exports from
@@ -19,28 +23,54 @@ service password-encryption
 enable secret class123
 banner motd # SW-LAB - Laboratory switch. Authorized access only. #
 !
-interface GigabitEthernet0/1
- description Uplink to LAB-R3 G0/0
+! ---------- VLANs ----------
+vlan 30
+ name LAB-LAN
  exit
-interface range FastEthernet0/1 - 5
- description Lab end devices and automation PC
+vlan 23
+ name WAN-TCH-LAB
+ exit
+!
+! ---------- Router ports ----------
+! portfast on every router port: without it a port that comes back up
+! (T3 restore) waits 30 s in spanning-tree before forwarding, which
+! would be counted as RIP convergence time.
+interface FastEthernet0/7
+ description Trunk to LAB-R3 G0/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 23,30
+ switchport mode trunk
+ switchport nonegotiate
+ spanning-tree portfast trunk
+ exit
+interface FastEthernet0/8
+ description WAN VLAN 23 - to TCH-R2 G0/1
  switchport mode access
+ switchport access vlan 23
  spanning-tree portfast
  exit
 !
-! ---------- Management IP ----------
-interface Vlan1
+! ---------- End devices ----------
+interface range FastEthernet0/1 - 6
+ description Lab end devices and automation PC
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
+ exit
+!
+! ---------- Management IP (in the LAN VLAN) ----------
+interface Vlan30
  ip address 192.168.30.2 255.255.255.0
  no shutdown
  exit
 ip default-gateway 192.168.30.1
 !
-! ---------- SSH ----------
+! ---------- Remote login ----------
+! Telnet, not SSH: the switches run the C3560-IPBASE image, which has no
+! crypto, so "crypto key" and "ip ssh" are rejected. The Python scripts only
+! SSH to the routers; the switches are managed from the console.
 ip domain-name school.local
 username admin privilege 15 secret Admin@123
-! If the switch asks "How many bits in the modulus", type 1024
-crypto key generate rsa general-keys modulus 1024
-ip ssh version 2
 !
 line console 0
  password cisco
@@ -49,7 +79,7 @@ line console 0
  exit
 line vty 0 15
  login local
- transport input ssh
+ transport input telnet
  exit
 !
 end

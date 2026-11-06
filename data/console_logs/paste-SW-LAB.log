@@ -1,0 +1,79 @@
+
+Switch>enable
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname SW-LAB
+SW-LAB(config)#no ip domain-lookup
+SW-LAB(config)#service password-encryption
+SW-LAB(config)#enable secret class123
+SW-LAB(config)#banner motd # SW-LAB - Laboratory switch. Authorized access on$ # SW-LAB - Laboratory switch. Authorized access onl         y. #
+SW-LAB(config)#vlan 30
+SW-LAB(config-vlan)# name LAB-LAN
+SW-LAB(config-vlan)# exit
+SW-LAB(config)#vlan 23
+SW-LAB(config-vlan)# name WAN-TCH-LAB
+SW-LAB(config-vlan)# exit
+SW-LAB(config)#interface FastEthernet0/7
+SW-LAB(config-if)# description Trunk to LAB-R3 G0/0
+SW-LAB(config-if)# switchport trunk encapsulation dot1q
+SW-LAB(config-if)# switchport trunk allowed vlan 23,30
+SW-LAB(config-if)# switchport mode trunk
+SW-LAB(config-if)# switchport nonegotiate
+SW-LAB(config-if)# spanning-tree portfast trunk
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+SW-LAB(config-if)# exit
+SW-LAB(config)#interface FastEthernet0/8
+SW-LAB(config-if)# description WAN VLAN 23 - to TCH-R2 G0/1
+SW-LAB(config-if)# switchport mode access
+SW-LAB(config-if)# switchport access vlan 23
+SW-LAB(config-if)# spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast has been configured on FastEthernet0/8 but will only
+ have effect when the interface is in a non-trunking mode.
+SW-LAB(config-if)# exit
+SW-LAB(config)#interface range FastEthernet0/1 - 6
+SW-LAB(config-if-range)# description Lab end devices and automation PC
+SW-LAB(config-if-range)# switchport mode access
+SW-LAB(config-if-range)# switchport access vlan 30
+SW-LAB(config-if-range)# spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast will be configured in 6 interfaces due to the range command 
+ but will only have effect when the interfaces are in a non-trunking mode.
+SW-LAB(config-if-range)#
+*Mar  1 01:34:38.022: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to down exit
+SW-LAB(config)#interface Vlan30
+SW-LAB(config-if)# ip address 192.168.30.2 255.255.255.0
+SW-LAB(config-if)#
+*Mar  1 01:34:41.343: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan30, changed state to up no shutdown
+SW-LAB(config-if)# exit
+SW-LAB(config)#ip default-gateway 192.168.30.1
+SW-LAB(config)#ip domain-name school.local
+SW-LAB(config)#username admin privilege 15 secret Admin@123
+SW-LAB(config)#line console 0
+SW-LAB(config-line)# password cisco
+SW-LAB(config-line)# login
+SW-LAB(config-line)# logging synchronous
+SW-LAB(config-line)# exit
+SW-LAB(config)#line vty 0 15
+SW-LAB(config-line)# login local
+SW-LAB(config-line)# transport input telnet
+SW-LAB(config-line)# exit
+SW-LAB(config)#end
+SW-LAB#write memory
+Building configuration...
+[OK]
+SW-LAB#
+*Mar  1 01:34:55.386: %SYS-5-CONFIG_I: Configured from console by console
+SW-LAB#

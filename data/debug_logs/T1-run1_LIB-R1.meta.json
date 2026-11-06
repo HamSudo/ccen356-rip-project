@@ -1,0 +1,11 @@
+{
+  "router": "LIB-R1",
+  "label": "T1-run1",
+  "mode": "recovered-from-console-log",
+  "source": "measured",
+  "capture_file": "data\\debug_logs\\T1-run1_LIB-R1.txt",
+  "recovered_from": [
+    "data/console_logs/Console-COM8-20261106-162255.log"
+  ],
+  "window": "16:24:59 to 16:27:17"
+}

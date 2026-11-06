@@ -1,0 +1,148 @@
+=~=~=~=~=~=~=~=~=~=~=~= PuTTY log 2026.11.06 15:41:58 =~=~=~=~=~=~=~=~=~=~=~=
+ SW-LIB - Library switch. Authorized access only. 
+
+User Access Verification
+
+Username: admin
+Password: 
+SW-LIB#show running-config
+Building configuration...
+
+Current configuration : 2148 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW-LIB
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$GhL7$VqvX6Vu4ckedcD8Wd/NLF/
+!
+username admin privilege 15 secret 5 $1$9mQ4$IkcdI.Wao.fagtc.PqNWK0
+no aaa new-model
+system mtu routing 1500
+ip subnet-zero
+no ip domain-lookup
+ip domain-name school.local
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+ --More--         !
+ --More--         !
+ --More--         interface FastEthernet0/1
+ --More--          description Library end devices
+ --More--          switchport access vlan 10
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface FastEthernet0/2
+ --More--          description Library end devices
+ --More--          switchport access vlan 10
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface FastEthernet0/3
+ --More--          description Library end devices
+ --More--          switchport access vlan 10
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface FastEthernet0/4
+ --More--          description Library end devices
+ --More--          switchport access vlan 10
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface FastEthernet0/5
+ --More--          description Library end devices
+ --More--          switchport access vlan 10
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface FastEthernet0/6
+ --More--          description Library end devices
+ --More--          switchport access vlan 10
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface FastEthernet0/7
+ --More--          description Trunk to LIB-R1 G0/0
+ --More--          switchport trunk encapsulation dot1q
+ --More--          switchport trunk allowed vlan 10,13
+ --More--          switchport mode trunk
+ --More--          switchport nonegotiate
+ --More--          spanning-tree portfast trunk
+ --More--         !
+ --More--         interface FastEthernet0/8
+ --More--          description WAN VLAN 13 - to LAB-R3 G0/1
+ --More--          switchport access vlan 13
+ --More--          switchport mode access
+ --More--          spanning-tree portfast
+ --More--         !
+ --More--         interface GigabitEthernet0/1
+ --More--         !
+ --More--         interface Vlan1
+ --More--          no ip address
+ --More--         !
+ --More--         interface Vlan10
+ --More--          ip address 192.168.10.2 255.255.255.0
+ --More--         !
+ --More--         ip default-gateway 192.168.10.1
+ --More--         ip classless
+ --More--         ip http server
+ --More--         !
+ --More--         !
+ --More--         control-plane
+ --More--         !
+ --More--         banner motd ^C SW-LIB - Library switch. Authorized access only. ^C
+ --More--         !
+ --More--         line con 0
+ --More--          password 7 104D000A0618
+ --More--          logging synchronous
+ --More--          login
+ --More--         line vty 0 4
+ --More--          login local
+ --More--          transport input telnet
+ --More--         line vty 5 15
+ --More--          login local
+ --More--          transport input telnet
+ --More--         !
+ --More--         end
+ --More--         
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#
+SW-LIB#

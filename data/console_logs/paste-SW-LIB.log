@@ -1,0 +1,89 @@
+
+Switch>enable
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname SW-LIB
+SW-LIB(config)#no ip domain-lookup
+SW-LIB(config)#service password-encryption
+SW-LIB(config)#enable secret class123
+SW-LIB(config)#banner motd # SW-LIB - Library switch. Authorized access only.$ # SW-LIB - Library switch. Authorized access only.          #
+SW-LIB(config)#vlan 10
+SW-LIB(config-vlan)# name LIB-LAN
+SW-LIB(config-vlan)# exit
+SW-LIB(config)#vlan 13
+SW-LIB(config-vlan)# name WAN-LIB-LAB
+SW-LIB(config-vlan)# exit
+SW-LIB(config)#interface FastEthernet0/7
+SW-LIB(config-if)# description Trunk to LIB-R1 G0/0
+SW-LIB(config-if)# switchport trunk encapsulation dot1q
+SW-LIB(config-if)# switchport trunk allowed vlan 10,13
+SW-LIB(config-if)# switchport mode trunk
+SW-LIB(config-if)# switchport nonegotiate
+SW-LIB(config-if)# spanning-tree portfast trunk
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+SW-LIB(config-if)# exit
+SW-LIB(config)#interface FastEthernet0/8
+SW-LIB(config-if)# description WAN VLAN 13 - to LAB-R3 G0/1
+SW-LIB(config-if)# switchport mode access
+SW-LIB(config-if)# switchport access vlan 13
+SW-LIB(config-if)# spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast has been configured on FastEthernet0/8 but will only
+ have effect when the interface is in a non-trunking mode.
+SW-LIB(config-if)# exit
+SW-LIB(config)#interface range FastEthernet0/1 - 6
+SW-LIB(config-if-range)# description Library end devices
+SW-LIB(config-if-range)# switchport mode access
+SW-LIB(config-if-range)# switchport access vlan 10
+SW-LIB(config-if-range)# spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast will be configured in 6 interfaces due to the range command 
+ but will only have effect when the interfaces are in a non-trunking mode.
+SW-LIB(config-if-range)#
+*Mar  1 00:24:28.962: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to down exit
+SW-LIB(config)#interface Vlan10
+SW-LIB(config-if)# ip address 192.168.10.2 255.255.255.0
+SW-LIB(config-if)#
+*Mar  1 00:24:40.740: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan10, changed state to up no shutdown
+SW-LIB(config-if)# exit
+SW-LIB(config)#ip default-gateway 192.168.10.1
+SW-LIB(config)#ip domain-name school.local
+SW-LIB(config)#username admin privilege 15 secret Admin@123
+SW-LIB(config)#crypto key generate rsa general-keys modulus 1024
+                ^
+% Invalid input detected at '^' marker.
+
+SW-LIB(config)#ip ssh version 2
+                   ^
+% Invalid input detected at '^' marker.
+
+SW-LIB(config)#line console 0
+SW-LIB(config-line)# password cisco
+SW-LIB(config-line)# login
+SW-LIB(config-line)# logging synchronous
+SW-LIB(config-line)# exit
+SW-LIB(config)#line vty 0 15
+SW-LIB(config-line)# login local
+SW-LIB(config-line)# transport input ssh
+                                     ^
+% Invalid input detected at '^' marker.
+
+SW-LIB(config-line)# exit
+SW-LIB(config)#end
+SW-LIB#write memory
+Building configuration...
+
+*Mar  1 00:24:56.930: %SYS-5-CONFIG_I: Configured from console by console[OK]
+SW-LIB#

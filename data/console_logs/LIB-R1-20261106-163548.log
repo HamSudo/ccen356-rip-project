@@ -1,0 +1,11 @@
+=~=~=~=~=~=~=~=~=~=~=~= PuTTY log 2026.11.06 16:35:48 =~=~=~=~=~=~=~=~=~=~=~=
+Using username "admin".
+Keyboard-interactive authentication prompts from server:
+| Password: 
+End of keyboard-interactive prompts from server
+ LIB-R1 - Library router. Authorized access only. 
+LIB-R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+LIB-R1(config)#int GI0/1
+LIB-R1(config-if)#no shutdown
+LIB-R1(config-if)#conf t      

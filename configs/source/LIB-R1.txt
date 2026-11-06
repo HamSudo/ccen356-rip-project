@@ -1,6 +1,6 @@
 ! ============================================================
-! LIB-R1 - Library router (Cisco 2901 + HWIC-2T module)
-! CCEN 356 Project 1 - RIPv2 school network
+! LIB-R1 - Library router (Cisco 2901, onboard ports only)
+! CCEN 356 Project 1 - RIPv2 school network, all-Ethernet design
 ! Paste into the CLI starting from Router> or Router#
 !
 ! NOTE: this is a paste-in script (what gets typed into a blank device),
@@ -8,6 +8,12 @@
 ! routers" are the 'show running-config' output, saved after the build
 ! in configs/exports/. Lines starting with '!' are comments, so the whole
 ! file can still be pasted into the CLI.
+!
+! Port plan (see docs/Design-Change-All-Ethernet.md):
+!   G0/0    802.1Q trunk to SW-LIB Fa0/7
+!     .10   VLAN 10  Library LAN          192.168.10.1/24
+!     .13   VLAN 13  WAN to LAB-R3 G0/1   10.0.13.1/30 (via SW-LIB)
+!   G0/1    WAN to TCH-R2 G0/0.12         10.0.12.1/30 (via SW-TCH Fa0/8)
 ! ============================================================
 enable
 configure terminal
@@ -19,22 +25,30 @@ enable secret class123
 banner motd # LIB-R1 - Library router. Authorized access only. #
 !
 ! ---------- Interfaces ----------
+! G0/0 carries two VLANs, so the IPs live on its subinterfaces.
 interface GigabitEthernet0/0
- description LAN - Library switch SW-LIB Gi0/1
+ description Trunk to SW-LIB Fa0/7 (VLAN 10 LAN, VLAN 13 WAN to LAB-R3)
+ no ip address
+ no shutdown
+ exit
+!
+interface GigabitEthernet0/0.10
+ description LAN - Library (VLAN 10)
+ encapsulation dot1Q 10
  ip address 192.168.10.1 255.255.255.0
- no shutdown
  exit
 !
-interface GigabitEthernet0/1
- description WAN Ethernet - to LAB-R3 G0/1
+interface GigabitEthernet0/0.13
+ description WAN - to LAB-R3 G0/1 through SW-LIB (VLAN 13)
+ encapsulation dot1Q 13
  ip address 10.0.13.1 255.255.255.252
- no shutdown
  exit
 !
-interface Serial0/0/0
- description WAN Serial - to TCH-R2 S0/0/0 (this end is DCE)
+! G0/1 is a whole physical port, so shutting it logs %LINK / %LINEPROTO
+! lines that parse_rip_debug.py uses as the start of T1 and T4.
+interface GigabitEthernet0/1
+ description WAN - to TCH-R2 G0/0.12 through SW-TCH Fa0/8 (VLAN 12)
  ip address 10.0.12.1 255.255.255.252
- clock rate 64000
  no shutdown
  exit
 !
@@ -51,7 +65,7 @@ router rip
  no auto-summary
  network 10.0.0.0
  network 192.168.10.0
- passive-interface GigabitEthernet0/0
+ passive-interface GigabitEthernet0/0.10
  exit
 !
 ! ---------- SSH for Python automation (netmiko) ----------

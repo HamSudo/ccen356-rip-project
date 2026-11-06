@@ -1,0 +1,5 @@
+! T4 (and the end of T1): bring TCH-R2's end of the LIB-TCH link back.
+! Push to TCH-R2 with --no-save BEFORE the 'no shutdown' on LIB-R1 G0/1,
+! so T4 measures only LIB-R1's link coming up.
+interface GigabitEthernet0/0.12
+ no shutdown

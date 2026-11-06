@@ -1,0 +1,12 @@
+obs_time,t_rel_s,since_mark_s,router,network,event,changes,metric_before,metric_after,next_hop_before,next_hop_after,status_before,status_after,before,after,window_start,window_s,after_gap,poll,detail
+2026-11-06T18:25:43.928,0.0,,TCH-R2,,monitor_start,,,,,,,,,,,,,0,source=live; interval=1s; target=192.168.30.0/24; expect_metric=2
+2026-11-06T18:25:44.682,0.75,,TCH-R2,10.0.13.0/30,baseline,,,1,,10.0.12.1+10.0.23.2,,up,,via 10.0.12.1 (GigabitEthernet0/0.12) m1 + via 10.0.23.2 (GigabitEthernet0/1) m1,,,,1,
+2026-11-06T18:25:44.682,0.75,,TCH-R2,192.168.10.0/24,baseline,,,1,,10.0.12.1,,up,,via 10.0.12.1 (GigabitEthernet0/0.12) m1,,,,1,
+2026-11-06T18:25:44.682,0.75,,TCH-R2,192.168.30.0/24,baseline,,,1,,10.0.23.2,,up,,via 10.0.23.2 (GigabitEthernet0/1) m1,,,,1,
+2026-11-06T18:25:57.168,13.242,0.0,TCH-R2,,mark,,,,,,,,,,,,,13,failure applied
+2026-11-06T18:26:20.624,36.687,23.456,TCH-R2,,session_lost,,,,,,,,,,,,,15,OSError: Socket is closed
+2026-11-06T18:26:21.286,37.359,24.118,TCH-R2,,session_restored,,,,,,,,,,,,,15,gap 0.662 s
+2026-11-06T18:26:21.371,37.437,24.203,TCH-R2,10.0.13.0/30,route_changed,"next_hop,paths",1,1,10.0.12.1+10.0.23.2,10.0.12.1,up,up,via 10.0.12.1 (GigabitEthernet0/0.12) m1 + via 10.0.23.2 (GigabitEthernet0/1) m1,via 10.0.12.1 (GigabitEthernet0/0.12) m1,2026-11-06T18:25:57.598,23.773,1,16,after session gap
+2026-11-06T18:26:21.371,37.437,24.203,TCH-R2,192.168.30.0/24,route_changed,"metric,next_hop",1,2,10.0.23.2,10.0.12.1,up,up,via 10.0.23.2 (GigabitEthernet0/1) m1,via 10.0.12.1 (GigabitEthernet0/0.12) m2,2026-11-06T18:25:57.598,23.773,1,16,after session gap
+2026-11-06T18:26:21.371,37.437,24.203,TCH-R2,192.168.30.0/24,converged,,,2,,10.0.12.1,,up,,via 10.0.12.1 (GigabitEthernet0/0.12) m2,,,,52,stable for 35 s (confirmed at 18:26:56.700)
+2026-11-06T18:27:14.625,90.687,77.457,TCH-R2,,monitor_stop,,,,,,,,,,,,,69,

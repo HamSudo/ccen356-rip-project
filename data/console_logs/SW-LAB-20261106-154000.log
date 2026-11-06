@@ -1,0 +1,62 @@
+=~=~=~=~=~=~=~=~=~=~=~= PuTTY log 2026.11.06 15:40:00 =~=~=~=~=~=~=~=~=~=~=~=
+ SW-LAB - Laboratory switch. Authorized access only. 
+
+User Access Verification
+
+Username: admin
+Password: 
+% Login invalid
+
+Username: admin
+Password: 
+SW-LAB#terminal length 0
+SW-LAB#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/1
+23   WAN-TCH-LAB                      active    Fa0/8
+30   LAB-LAN                          active    Fa0/1, Fa0/2, Fa0/3, Fa0/4, Fa0/5, Fa0/6
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+SW-LAB#show interfaces trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Fa0/7       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Fa0/7       23,30
+
+Port        Vlans allowed and active in management domain
+Fa0/7       23,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/7       23,30
+SW-LAB#show interfaces status
+
+Port      Name               Status       Vlan       Duplex  Speed Type
+Fa0/1     Lab end devices an notconnect   30           auto   auto 10/100BaseTX
+Fa0/2     Lab end devices an notconnect   30           auto   auto 10/100BaseTX
+Fa0/3     Lab end devices an notconnect   30           auto   auto 10/100BaseTX
+Fa0/4     Lab end devices an notconnect   30           auto   auto 10/100BaseTX
+Fa0/5     Lab end devices an connected    30         a-full  a-100 10/100BaseTX
+Fa0/6     Lab end devices an notconnect   30           auto   auto 10/100BaseTX
+Fa0/7     Trunk to LAB-R3 G0 connected    trunk      a-full  a-100 10/100BaseTX
+Fa0/8     WAN VLAN 23 - to T connected    23         a-full  a-100 10/100BaseTX
+Gi0/1                        notconnect   1            auto   auto Not Present
+SW-LAB#show cdp neighbors
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port Mac Relay 
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+TCH-R2.school.local
+                 Fas 0/8           163             R S I  CISCO2901 Gig 0/1
+LAB-R3.school.local
+                 Fas 0/7           178             R S I  CISCO2901 Gig 0/0
+SW-LAB#show ip interface brief | include Vlan
+Vlan1                  unassigned      YES unset  up                    down    
+Vlan30                 192.168.30.2    YES manual up                    up      
+SW-LAB#

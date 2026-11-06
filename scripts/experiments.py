@@ -41,40 +41,60 @@ EXPERIMENTS = {
         action=("Nothing to do: all links up. Snapshot every router.",),
         notes=("Every remote LAN should be at metric 1 on every router.",),
     ),
+    # All-Ethernet design (docs/Design-Change-All-Ethernet.md): each WAN link
+    # runs through a switch, so one end is a physical port and the other a
+    # subinterface. The measured router's end is always the physical port,
+    # because only a physical port logs the %LINK line the debug parser
+    # starts from. The far end is shut too, so both routers drop the link
+    # like a cut cable.
     "T1": Experiment(
-        test="T1", title="Library-Teachers serial down", router="LIB-R1",
+        test="T1", title="Library-Teachers link down", router="LIB-R1",
         network="192.168.20.0/24", metric=2, next_hop="10.0.13.2", before_metric=1,
-        action=("On LIB-R1:", "  configure terminal", "  interface Serial0/0/0", "  shutdown", "  end"),
-        restore=("On LIB-R1:", "  configure terminal", "  interface Serial0/0/0", "  no shutdown", "  end",
-                 "(or run T4 now: T4 IS this restore, measured)"),
-        notes=("SSH from the LAB LAN to LIB-R1 uses G0/1, so the session stays up.",),
+        action=("On the LIB-R1 console, on 'go':", "  configure terminal", "  interface GigabitEthernet0/1",
+                "  shutdown", "  end",
+                "Right after, far end (second terminal):",
+                "  python scripts/push_config.py configs/push/t1-far-down.txt TCH-R2 --no-save"),
+        restore=("Run T4 now: T4 IS this restore, measured. Unmeasured restore:",
+                 "  python scripts/push_config.py configs/push/t1-far-up.txt TCH-R2 --no-save",
+                 "  then on LIB-R1: interface GigabitEthernet0/1 > no shutdown"),
+        notes=("SSH from the LAB LAN to LIB-R1 runs over LAB-R3 G0/1, so the session stays up.",),
     ),
     "T2": Experiment(
-        test="T2", title="Library-Lab Ethernet down", router="LIB-R1",
-        network="192.168.30.0/24", metric=2, next_hop="10.0.12.2", before_metric=1,
-        action=("From the LIB-R1 CONSOLE (not SSH):", "  configure terminal", "  interface GigabitEthernet0/1",
-                "  shutdown", "  end"),
-        restore=("From the LIB-R1 console:", "  configure terminal", "  interface GigabitEthernet0/1",
-                 "  no shutdown", "  end"),
-        notes=("A laptop on the LAB LAN reaches LIB-R1 over this link: the SSH session drops "
-               "until RIP finds the path via TCH-R2. The monitor reconnects and logs the gap; "
-               "the debug capture is read back from the log buffer afterwards.",),
+        test="T2", title="Library-Lab link down", router="LAB-R3",
+        network="192.168.10.0/24", metric=2, next_hop="10.0.23.1", before_metric=1,
+        action=("On 'go', measured end (second terminal; or LAB-R3 console: interface G0/1 > shutdown):",
+                "  python scripts/push_config.py configs/push/t2-measured-down.txt LAB-R3 --no-save",
+                "Right after it returns, far end on the LIB-R1 CONSOLE (SSH to LIB-R1 uses this link):",
+                "  configure terminal", "  interface GigabitEthernet0/0.13", "  shutdown", "  end"),
+        restore=("On the LIB-R1 console: interface GigabitEthernet0/0.13 > no shutdown",
+                 "Then: python scripts/push_config.py configs/push/t2-measured-up.txt LAB-R3 --no-save",
+                 "Wait ~45 s: LAB-R3 back to 192.168.10.0/24 metric 1 via 10.0.13.1."),
+        notes=("Measured on LAB-R3 (its end of the link is the physical port). AUTO-PC is on "
+               "LAB-R3's LAN, so this SSH session stays up; the one to LIB-R1 drops until RIP "
+               "converges via TCH-R2.",),
     ),
     "T3": Experiment(
-        test="T3", title="Teachers-Lab serial down", router="TCH-R2",
+        test="T3", title="Teachers-Lab link down", router="TCH-R2",
         network="192.168.30.0/24", metric=2, next_hop="10.0.12.1", before_metric=1,
-        action=("From the TCH-R2 CONSOLE (recommended):", "  configure terminal", "  interface Serial0/0/1",
-                "  shutdown", "  end"),
-        restore=("On TCH-R2:", "  configure terminal", "  interface Serial0/0/1", "  no shutdown", "  end"),
-        notes=("Not in the plan: a laptop on the LAB LAN reaches TCH-R2 over LAB-R3 S0/0/0 -> "
-               "TCH-R2 S0/0/1, which is the link being shut. Expect the SSH session to TCH-R2 "
-               "to drop like T2; the scripts handle it the same way.",),
+        action=("On the TCH-R2 CONSOLE, on 'go':", "  configure terminal", "  interface GigabitEthernet0/1",
+                "  shutdown", "  end",
+                "Right after, far end (second terminal):",
+                "  python scripts/push_config.py configs/push/t3-far-down.txt LAB-R3 --no-save"),
+        restore=("  python scripts/push_config.py configs/push/t3-far-up.txt LAB-R3 --no-save",
+                 "Then on the TCH-R2 console: interface GigabitEthernet0/1 > no shutdown",
+                 "Wait ~45 s: TCH-R2 back to 192.168.30.0/24 metric 1 via 10.0.23.2."),
+        notes=("A laptop on the LAB LAN reaches TCH-R2 over LAB-R3 G0/0.23 -> TCH-R2 G0/1, the "
+               "link being shut: the SSH session to TCH-R2 drops until RIP converges. The monitor "
+               "reconnects and logs the gap; the debug capture is read back from the log buffer.",),
     ),
     "T4": Experiment(
         test="T4", title="Recovery (T1 link back up)", router="LIB-R1",
         network="192.168.20.0/24", metric=1, next_hop="10.0.12.2", before_metric=2,
-        action=("Precondition: the T1 link (LIB-R1 S0/0/0) is DOWN and has converged.",
-                "On LIB-R1:", "  configure terminal", "  interface Serial0/0/0", "  no shutdown", "  end"),
+        action=("Precondition: the T1 link is DOWN and has converged.",
+                "BEFORE 'go', far end first (second terminal):",
+                "  python scripts/push_config.py configs/push/t1-far-up.txt TCH-R2 --no-save",
+                "Then on the LIB-R1 console, on 'go':", "  configure terminal",
+                "  interface GigabitEthernet0/1", "  no shutdown", "  end"),
         restore=("Nothing: the network is back to normal.",),
         notes=("Run it straight after each T1 run: T1-run1, T4-run1, T1-run2, T4-run2, ...",),
     ),
@@ -85,7 +105,7 @@ EXPERIMENTS = {
         action=("Push the T5 change to LAB-R3 (does NOT save it):",
                 "  python scripts/push_config.py configs/push/t5-start.txt LAB-R3 --no-save"),
         restore=("  python scripts/push_config.py configs/push/t5-stop.txt LAB-R3 --no-save",
-                 "Then wait ~60 s and check LIB-R1 is back to metric 1 via 10.0.13.2."),
+                 "Then wait ~60 s and check LIB-R1 is back to metric 1 via 10.0.13.2 (G0/0.13)."),
         notes=("Pre-roll is 35 s so at least one update from LAB-R3 (10.0.13.2) is in the log: "
                "parse_rip_debug.py measures T5 from the last update heard from it.",
                "Plan expects about 240-270 s (flush timer + TCH-R2's next update). Some IOS "

@@ -1,6 +1,6 @@
 ! ============================================================
-! LAB-R3 - Laboratory router (Cisco 2901 + HWIC-2T module)
-! CCEN 356 Project 1 - RIPv2 school network
+! LAB-R3 - Laboratory router (Cisco 2901, onboard ports only)
+! CCEN 356 Project 1 - RIPv2 school network, all-Ethernet design
 ! Paste into the CLI starting from Router> or Router#
 !
 ! NOTE: this is a paste-in script (what gets typed into a blank device),
@@ -8,6 +8,12 @@
 ! routers" are the 'show running-config' output, saved after the build
 ! in configs/exports/. Lines starting with '!' are comments, so the whole
 ! file can still be pasted into the CLI.
+!
+! Port plan (see docs/Design-Change-All-Ethernet.md):
+!   G0/0    802.1Q trunk to SW-LAB Fa0/7
+!     .30   VLAN 30  Laboratory LAN       192.168.30.1/24
+!     .23   VLAN 23  WAN to TCH-R2 G0/1   10.0.23.2/30 (via SW-LAB)
+!   G0/1    WAN to LIB-R1 G0/0.13         10.0.13.2/30 (via SW-LIB Fa0/8)
 ! ============================================================
 enable
 configure terminal
@@ -19,21 +25,29 @@ enable secret class123
 banner motd # LAB-R3 - Laboratory router. Authorized access only. #
 !
 ! ---------- Interfaces ----------
+! G0/0 carries two VLANs, so the IPs live on its subinterfaces.
 interface GigabitEthernet0/0
- description LAN - Lab switch SW-LAB Gi0/1
+ description Trunk to SW-LAB Fa0/7 (VLAN 30 LAN, VLAN 23 WAN to TCH-R2)
+ no ip address
+ no shutdown
+ exit
+!
+interface GigabitEthernet0/0.30
+ description LAN - Laboratory (VLAN 30)
+ encapsulation dot1Q 30
  ip address 192.168.30.1 255.255.255.0
- no shutdown
  exit
 !
-interface GigabitEthernet0/1
- description WAN Ethernet - to LIB-R1 G0/1
- ip address 10.0.13.2 255.255.255.252
- no shutdown
- exit
-!
-interface Serial0/0/0
- description WAN Serial - to TCH-R2 S0/0/1 (this end is DTE)
+interface GigabitEthernet0/0.23
+ description WAN - to TCH-R2 G0/1 through SW-LAB (VLAN 23)
+ encapsulation dot1Q 23
  ip address 10.0.23.2 255.255.255.252
+ exit
+!
+! G0/1 is a whole physical port: T2 shuts it, and T5 makes it passive.
+interface GigabitEthernet0/1
+ description WAN - to LIB-R1 G0/0.13 through SW-LIB Fa0/8 (VLAN 13)
+ ip address 10.0.13.2 255.255.255.252
  no shutdown
  exit
 !
@@ -50,7 +64,7 @@ router rip
  no auto-summary
  network 10.0.0.0
  network 192.168.30.0
- passive-interface GigabitEthernet0/0
+ passive-interface GigabitEthernet0/0.30
  exit
 !
 ! ---------- SSH for Python automation (netmiko) ----------

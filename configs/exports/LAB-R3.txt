@@ -1,0 +1,106 @@
+Building configuration...
+
+Current configuration : 1871 bytes
+!
+! Last configuration change at 16:03:32 UTC Fri Nov 6 2026 by admin
+! NVRAM config last updated at 16:03:32 UTC Fri Nov 6 2026 by admin
+!
+version 15.0
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname LAB-R3
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 64000
+enable secret 5 $1$8XbP$nUSjohvg7R52HKZ4yezTe0
+!
+no aaa new-model
+!
+no ipv6 cef
+ip source-route
+ip cef
+!
+!
+ip dhcp excluded-address 192.168.30.1 192.168.30.20
+!
+ip dhcp pool LAB-LAN
+   network 192.168.30.0 255.255.255.0
+   default-router 192.168.30.1 
+!
+!
+no ip domain lookup
+ip domain name school.local
+multilink bundle-name authenticated
+!
+!
+!
+!
+license udi pid CISCO2901/K9 sn FGL151126G0
+!
+!
+username admin privilege 15 secret 5 $1$5rJK$i/dZnmBLHf/l3c5SttMfI0
+!
+!
+ip ssh version 2
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description Trunk to SW-LAB Fa0/7 (VLAN 30 LAN, VLAN 23 WAN to TCH-R2)
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.23
+ description WAN - to TCH-R2 G0/1 through SW-LAB (VLAN 23)
+ encapsulation dot1Q 23
+ ip address 10.0.23.2 255.255.255.252
+!
+interface GigabitEthernet0/0.30
+ description LAN - Laboratory (VLAN 30)
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+!
+interface GigabitEthernet0/1
+ description WAN - to LIB-R1 G0/0.13 through SW-LIB Fa0/8 (VLAN 13)
+ ip address 10.0.13.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+router rip
+ version 2
+ passive-interface GigabitEthernet0/0.30
+ network 10.0.0.0
+ network 192.168.30.0
+ no auto-summary
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C LAB-R3 - Laboratory router. Authorized access only. ^C
+!
+line con 0
+ password 7 00071A150754
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+end
+

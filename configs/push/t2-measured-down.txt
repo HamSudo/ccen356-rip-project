@@ -1,0 +1,5 @@
+! T2: measured end of the Library-Lab link. Push to LAB-R3 with --no-save on
+! 'go'. AUTO-PC is on LAB-R3's own LAN, so this SSH session does not use the
+! link being cut. Then shut the far end (LIB-R1 G0/0.13) on LIB-R1's console.
+interface GigabitEthernet0/1
+ shutdown

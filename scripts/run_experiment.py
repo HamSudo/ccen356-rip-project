@@ -212,7 +212,23 @@ def main(argv=None):
     parser.add_argument("--duration", type=float, help="override monitor/capture duration (seconds)")
     parser.add_argument("--stable-for", type=float, default=35.0)
     parser.add_argument("--pings-lost", type=int, help="lost ping count from 'ping -t -w 1000'")
+    parser.add_argument("--overwrite", action="store_true",
+                        help="allow re-running a run number whose files already exist")
     args = parser.parse_args(argv)
+
+    # In the lab, re-running a command from the shell history (up arrow)
+    # silently replaced T1-run1's debug and monitor files. Refuse instead.
+    exp = get_experiment(args.test)
+    if exp.test != "T0" and not args.overwrite:
+        stem = f"{run_label(exp.test, args.run)}_{exp.router}"
+        existing = [p for p in (DATA_DIR / "debug_logs" / f"{stem}.txt",
+                                DATA_DIR / "monitor_logs" / f"{stem}_summary.json") if p.exists()]
+        if existing:
+            print(f"{run_label(exp.test, args.run)} already has saved files:")
+            for p in existing:
+                print(f"    {p}")
+            print("Use the next run number, or add --overwrite to replace them on purpose.")
+            return 1
 
     run_one(args.test, run=args.run, duration=args.duration,
             stable_for=args.stable_for, pings_lost=args.pings_lost)

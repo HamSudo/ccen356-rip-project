@@ -1,0 +1,62 @@
+{
+  "label": "T3-run2",
+  "router": "TCH-R2",
+  "source": "live",
+  "networks": "all",
+  "target": "192.168.30.0/24",
+  "expect_metric": 2,
+  "expect_next_hop": "10.0.12.1",
+  "stable_for_s": 35.0,
+  "interval_target_s": 1.0,
+  "started": "2026-11-06T18:17:33.390",
+  "ended": "2026-11-06T18:19:03.855",
+  "interrupted": false,
+  "marks": [
+    {
+      "time": "2026-11-06T18:17:55.436",
+      "text": "failure applied"
+    }
+  ],
+  "first_change": {
+    "obs_time": "2026-11-06T18:18:26.836",
+    "since_mark_s": 31.4,
+    "window_s": 30.773,
+    "network": "192.168.30.0/24",
+    "event": "route_changed",
+    "after": "via 10.0.12.1 (GigabitEthernet0/0.12) m2"
+  },
+  "converged": {
+    "obs_time": "2026-11-06T18:18:26.836",
+    "since_mark_s": 31.4,
+    "window_s": null,
+    "network": "192.168.30.0/24",
+    "event": "converged",
+    "after": "via 10.0.12.1 (GigabitEthernet0/0.12) m2"
+  },
+  "target_met_at_start": false,
+  "final_state": {
+    "10.0.13.0/30": "via 10.0.12.1 (GigabitEthernet0/0.12) m1",
+    "192.168.10.0/24": "via 10.0.12.1 (GigabitEthernet0/0.12) m1",
+    "192.168.30.0/24": "via 10.0.12.1 (GigabitEthernet0/0.12) m2"
+  },
+  "polls": 62,
+  "polls_ok": 61,
+  "polls_failed": 1,
+  "poll_interval_mean_s": 1.455,
+  "poll_interval_max_s": 29.703,
+  "poll_duration_mean_s": 0.437,
+  "poll_duration_max_s": 22.015,
+  "polls_slower_than_interval": 1,
+  "session_gaps": [
+    {
+      "lost": "2026-11-06T18:18:19.075",
+      "restored": "2026-11-06T18:18:26.752",
+      "gap_s": 7.677
+    }
+  ],
+  "files": {
+    "events": "D:\\ccen356-rip-project\\data\\monitor_logs\\T3-run2_TCH-R2.csv",
+    "polls": "D:\\ccen356-rip-project\\data\\monitor_logs\\T3-run2_TCH-R2_polls.csv"
+  },
+  "time_note": "obs_time = laptop clock when the change was SEEN; the change happened inside [window_start, obs_time]. Marks are operator key presses, not router events."
+}

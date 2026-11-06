@@ -1,0 +1,117 @@
+Building configuration...
+
+Current configuration : 2235 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW-LAB
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$/nfV$LvYGJvrTbKuLZ0UyeUMMI/
+!
+username admin privilege 15 secret 5 $1$TIPU$1cK3LOjY/ifdzdiGsIQmj1
+no aaa new-model
+system mtu routing 1500
+ip subnet-zero
+no ip domain-lookup
+ip domain-name school.local
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface FastEthernet0/1
+ description Lab end devices and automation PC
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/2
+ description Lab end devices and automation PC
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/3
+ description Lab end devices and automation PC
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/4
+ description Lab end devices and automation PC
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/5
+ description Lab end devices and automation PC
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/6
+ description Lab end devices and automation PC
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/7
+ description Trunk to LAB-R3 G0/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 23,30
+ switchport mode trunk
+ switchport nonegotiate
+ spanning-tree portfast trunk
+!
+interface FastEthernet0/8
+ description WAN VLAN 23 - to TCH-R2 G0/1
+ switchport access vlan 23
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet0/1
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan30
+ ip address 192.168.30.2 255.255.255.0
+!
+ip default-gateway 192.168.30.1
+ip classless
+ip http server
+!
+!
+control-plane
+!
+banner motd ^C SW-LAB - Laboratory switch. Authorized access only. ^C
+!
+line con 0
+ password 7 1511021F0725
+ logging synchronous
+ login
+line vty 0 4
+ login local
+ transport input telnet
+line vty 5 15
+ login local
+ transport input telnet
+!
+end

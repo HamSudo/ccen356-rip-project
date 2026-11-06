@@ -1,0 +1,106 @@
+Building configuration...
+
+Current configuration : 1865 bytes
+!
+! Last configuration change at 16:03:24 UTC Fri Nov 6 2026 by admin
+! NVRAM config last updated at 16:03:24 UTC Fri Nov 6 2026 by admin
+!
+version 15.0
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname LIB-R1
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 64000
+enable secret 5 $1$p8nu$V9g/0tNewe59wGJd/RG.R1
+!
+no aaa new-model
+!
+no ipv6 cef
+ip source-route
+ip cef
+!
+!
+ip dhcp excluded-address 192.168.10.1 192.168.10.20
+!
+ip dhcp pool LIB-LAN
+   network 192.168.10.0 255.255.255.0
+   default-router 192.168.10.1 
+!
+!
+no ip domain lookup
+ip domain name school.local
+multilink bundle-name authenticated
+!
+!
+!
+!
+license udi pid CISCO2901/K9 sn FGL151126FV
+!
+!
+username admin privilege 15 secret 5 $1$YY/.$22BBkrIr6e2jPwOT0C.pO/
+!
+!
+ip ssh version 2
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description Trunk to SW-LIB Fa0/7 (VLAN 10 LAN, VLAN 13 WAN to LAB-R3)
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ description LAN - Library (VLAN 10)
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+!
+interface GigabitEthernet0/0.13
+ description WAN - to LAB-R3 G0/1 through SW-LIB (VLAN 13)
+ encapsulation dot1Q 13
+ ip address 10.0.13.1 255.255.255.252
+!
+interface GigabitEthernet0/1
+ description WAN - to TCH-R2 G0/0.12 through SW-TCH Fa0/8 (VLAN 12)
+ ip address 10.0.12.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+router rip
+ version 2
+ passive-interface GigabitEthernet0/0.10
+ network 10.0.0.0
+ network 192.168.10.0
+ no auto-summary
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C LIB-R1 - Library router. Authorized access only. ^C
+!
+line con 0
+ password 7 070C285F4D06
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+end
+

@@ -4,25 +4,25 @@ A three-room school network (Library, Teachers' room, Laboratory) on Cisco 2901 
 
 ## Network
 
-Three routers in a triangle, so every room has two paths to every other room. One link is Ethernet, two are 64 kbps serial.
+Three routers in a triangle, so every room has two paths to every other room. All links are Ethernet. The lab 2901s have only two ports (G0/0, G0/1) and no serial modules, so each router's G0/0 is an 802.1Q trunk to its room switch: it carries the LAN and one WAN link as VLANs. Each router's G0/1 goes to the next room's switch.
 
 ```mermaid
 graph TD
     LIB["LIB-R1 · Library<br/>LAN 192.168.10.0/24"]
     TCH["TCH-R2 · Teachers' room<br/>LAN 192.168.20.0/24"]
     LAB["LAB-R3 · Laboratory<br/>LAN 192.168.30.0/24<br/>AUTO-PC 192.168.30.20"]
-    LIB ---|"Serial 10.0.12.0/30"| TCH
-    LIB ---|"Ethernet 10.0.13.0/30"| LAB
-    TCH ---|"Serial 10.0.23.0/30"| LAB
+    LIB ---|"10.0.12.0/30 · VLAN 12 on SW-TCH"| TCH
+    LIB ---|"10.0.13.0/30 · VLAN 13 on SW-LIB"| LAB
+    TCH ---|"10.0.23.0/30 · VLAN 23 on SW-LAB"| LAB
 ```
 
-| Router | LAN (G0/0) | Links |
+| Router | LAN | Links |
 |---|---|---|
-| LIB-R1 | 192.168.10.1/24 | S0/0/0 to TCH-R2 (DCE), G0/1 to LAB-R3 |
-| TCH-R2 | 192.168.20.1/24 | S0/0/0 to LIB-R1, S0/0/1 to LAB-R3 (DCE) |
-| LAB-R3 | 192.168.30.1/24 | G0/1 to LIB-R1, S0/0/0 to TCH-R2 |
+| LIB-R1 | G0/0.10 192.168.10.1/24 | G0/1 to TCH-R2 G0/0.12; G0/0.13 to LAB-R3 G0/1 |
+| TCH-R2 | G0/0.20 192.168.20.1/24 | G0/0.12 to LIB-R1 G0/1; G0/1 to LAB-R3 G0/0.23 |
+| LAB-R3 | G0/0.30 192.168.30.1/24 | G0/0.23 to TCH-R2 G0/1; G0/1 to LIB-R1 G0/0.13 |
 
-Each router runs `router rip`, `version 2`, `no auto-summary`, with its LAN passive. Each room has a 2960 switch with PCs, laptops and a printer. Full configs are in [`configs/source/`](configs/source/); the full design (IP plan, cabling, build steps, expected routing tables) is in [`docs/Part1-Network-Design-and-RIP-Configuration.pdf`](docs/Part1-Network-Design-and-RIP-Configuration.pdf).
+Each router runs `router rip`, `version 2`, `no auto-summary`, with its LAN passive. Each room has a Catalyst 3560-8PC switch with PCs, laptops and a printer. Full configs are in [`configs/source/`](configs/source/). The design, cabling and expected routing tables are in [`docs/Design-Change-All-Ethernet.md`](docs/Design-Change-All-Ethernet.md), which updates the original [Part 1 design](docs/Part1-Network-Design-and-RIP-Configuration.pdf) (serial version) for the lab hardware.
 
 ## Repository layout
 
@@ -92,11 +92,13 @@ Files in `configs/push/` hold config-mode lines only (no `configure terminal` or
 | Test | Cause | Expected result |
 |---|---|---|
 | T0 Baseline | all links up | every remote LAN at metric 1 |
-| T1 | shut LIB-R1 S0/0/0 | LIB-R1 reaches 192.168.20.0/24 via LAB-R3, metric 2 |
-| T2 | shut LIB-R1 G0/1 (from the console) | LIB-R1 reaches 192.168.30.0/24 via TCH-R2, metric 2 |
-| T3 | shut TCH-R2 S0/0/1 | TCH-R2 reaches 192.168.30.0/24 via LIB-R1, metric 2 |
+| T1 | shut LIB-R1 G0/1 + TCH-R2 G0/0.12 | LIB-R1 reaches 192.168.20.0/24 via LAB-R3, metric 2 |
+| T2 | shut LAB-R3 G0/1 + LIB-R1 G0/0.13 (console) | LAB-R3 reaches 192.168.10.0/24 via TCH-R2, metric 2 |
+| T3 | shut TCH-R2 G0/1 (console) + LAB-R3 G0/0.23 | TCH-R2 reaches 192.168.30.0/24 via LIB-R1, metric 2 |
 | T4 | bring the T1 link back | the 1-hop route returns |
 | T5 Silent failure | `passive-interface G0/1` on LAB-R3 | LIB-R1 waits for RIP's timers: about 240 to 270 s |
+
+The WAN links run through switches, so each link test shuts both ends, the way a cut cable would. The measured router's end is always its physical G0/1, because a subinterface shutdown logs no `%LINK` line for the debug parser to start from.
 
 Each test runs 3 times. For each run:
 

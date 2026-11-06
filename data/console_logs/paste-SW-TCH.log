@@ -1,0 +1,79 @@
+
+SW-TCH#enable
+SW-TCH#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW-TCH(config)#hostname SW-TCH
+SW-TCH(config)#no ip domain-lookup
+SW-TCH(config)#service password-encryption
+SW-TCH(config)#enable secret class123
+SW-TCH(config)#banner motd # SW-TCH - Teachers room switch. Authorized access$ # SW-TCH - Teachers room switch. Authorized access          only. #
+SW-TCH(config)#vlan 20
+SW-TCH(config-vlan)# name TCH-LAN
+SW-TCH(config-vlan)# exit
+SW-TCH(config)#vlan 12
+SW-TCH(config-vlan)# name WAN-LIB-TCH
+SW-TCH(config-vlan)# exit
+SW-TCH(config)#interface FastEthernet0/7
+SW-TCH(config-if)# description Trunk to TCH-R2 G0/0
+SW-TCH(config-if)# switchport trunk encapsulation dot1q
+SW-TCH(config-if)# switchport trunk allowed vlan 12,20
+SW-TCH(config-if)# switchport mode trunk
+SW-TCH(config-if)# switchport nonegotiate
+SW-TCH(config-if)# spanning-tree portfast trunk
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+SW-TCH(config-if)# exit
+SW-TCH(config)#interface FastEthernet0/8
+SW-TCH(config-if)# description WAN VLAN 12 - to LIB-R1 G0/1
+SW-TCH(config-if)# switchport mode access
+SW-TCH(config-if)# switchport access vlan 12
+SW-TCH(config-if)# spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast has been configured on FastEthernet0/8 but will only
+ have effect when the interface is in a non-trunking mode.
+SW-TCH(config-if)# exit
+SW-TCH(config)#interface range FastEthernet0/1 - 6
+SW-TCH(config-if-range)# description Teachers room end devices
+SW-TCH(config-if-range)# switchport mode access
+SW-TCH(config-if-range)# switchport access vlan 20
+SW-TCH(config-if-range)# spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast will be configured in 6 interfaces due to the range command 
+ but will only have effect when the interfaces are in a non-trunking mode.
+SW-TCH(config-if-range)#
+*Mar  1 01:29:19.481: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to down exit
+SW-TCH(config)#interface Vlan20
+SW-TCH(config-if)# ip address 192.168.20.2 255.255.255.0
+SW-TCH(config-if)#
+*Mar  1 01:29:31.242: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan20, changed state to up no shutdown
+SW-TCH(config-if)# exit
+SW-TCH(config)#ip default-gateway 192.168.20.1
+SW-TCH(config)#ip domain-name school.local
+SW-TCH(config)#username admin privilege 15 secret Admin@123
+SW-TCH(config)#line console 0
+SW-TCH(config-line)# password cisco
+SW-TCH(config-line)# login
+SW-TCH(config-line)# logging synchronous
+SW-TCH(config-line)# exit
+SW-TCH(config)#line vty 0 15
+SW-TCH(config-line)# login local
+SW-TCH(config-line)# transport input telnet
+SW-TCH(config-line)# exit
+SW-TCH(config)#end
+SW-TCH#write memory
+Building configuration...
+[OK]
+SW-TCH#
+*Mar  1 01:29:45.519: %SYS-5-CONFIG_I: Configured from console by console
+SW-TCH#

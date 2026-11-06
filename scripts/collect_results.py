@@ -18,6 +18,7 @@ Average, Min, Max, Pings lost) so it can be pasted straight into Section 6a.
 import argparse
 import csv
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -63,6 +64,26 @@ def measure_debug_file(log_path, exp):
         "end": result["end"]["time"].strftime("%H:%M:%S.%f")[:-3],
         "note": "",
     }
+
+
+RUNNER_LINES = "runner_debug_lines_T1-T4.txt"
+
+
+def runner_printed_debug(debug_dir, label):
+    """Fallback when a run's raw capture is lost: the figures run_experiment.py
+    printed for it, saved in runner_debug_lines_T1-T4.txt. Used for T2 (its
+    captures were deleted and the console was not on LAB-R3, so no raw copy)."""
+    path = Path(debug_dir) / RUNNER_LINES
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    start = re.search(rf"^{re.escape(label)}\s.*Debug start:\s+(\S+)", text, re.M)
+    end = re.search(rf"^{re.escape(label)}\s.*Debug end:\s+(\S+)", text, re.M)
+    secs = re.search(rf"^{re.escape(label)}\s.*Debug convergence:\s+([\d.]+) s", text, re.M)
+    if not secs:
+        return None
+    return {"seconds": float(secs.group(1)), "start": start.group(1) if start else "",
+            "end": end.group(1) if end else "", "note": "debug value from runner output (raw capture lost)"}
 
 
 def read_monitor_run(monitor_dir, label, router):
@@ -120,11 +141,18 @@ def collect(debug_dir=DATA_DIR / "debug_logs", monitor_dir=DATA_DIR / "monitor_l
     rows = []
     for test in tests:
         exp = get_experiment(test)
-        for run in runs:
+        # Runs 1-3 always get a row; extra runs done in the lab (e.g. T1-run4,
+        # an extra cut so the last T4 run could start) are added if saved.
+        found = {int(m.group(1)) for d in (debug_dir, monitor_dir) if Path(d).is_dir()
+                 for p in Path(d).iterdir()
+                 if (m := re.match(rf"{re.escape(exp.test)}-run(\d+)_{re.escape(exp.router)}[._]", p.name))}
+        for run in sorted(set(runs) | found):
             label = run_label(test, run)
             log_path = Path(debug_dir) / f"{label}_{exp.router}.txt"
             meta_path = Path(debug_dir) / f"{label}_{exp.router}.meta.json"
             dbg = measure_debug_file(log_path, exp)
+            if dbg is None:
+                dbg = runner_printed_debug(debug_dir, label)
             mon = read_monitor_run(monitor_dir, label, exp.router)
             meta_source = ""
             if meta_path.is_file():
@@ -240,6 +268,8 @@ def format_markdown_table(rows):
         s = summary[test]
         r1, r2, r3 = (f"{s['runs'][i]:.2f}" if i in s["runs"] else "—" for i in (1, 2, 3))
         avg = f"{s['avg']:.2f}" if s["avg"] is not None else "—"
+        if len(s["values"]) > 3:
+            avg += f" (n={len(s['values'])})"  # extra runs beyond the 3 columns
         mm = f"{s['min']:.2f}–{s['max']:.2f}" if s["min"] is not None else "—"
         pl = f"{s['pings_avg']:.1f}" if s["pings_avg"] is not None else "—"
         lines.append(f"| {test} ({s['title']}) | {r1} | {r2} | {r3} | {avg} | {mm} | {pl} |")

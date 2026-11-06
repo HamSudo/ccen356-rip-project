@@ -1,6 +1,6 @@
 ! ============================================================
-! TCH-R2 - Teachers' room router (Cisco 2901 + HWIC-2T module)
-! CCEN 356 Project 1 - RIPv2 school network
+! TCH-R2 - Teachers' room router (Cisco 2901, onboard ports only)
+! CCEN 356 Project 1 - RIPv2 school network, all-Ethernet design
 ! Paste into the CLI starting from Router> or Router#
 !
 ! NOTE: this is a paste-in script (what gets typed into a blank device),
@@ -8,6 +8,12 @@
 ! routers" are the 'show running-config' output, saved after the build
 ! in configs/exports/. Lines starting with '!' are comments, so the whole
 ! file can still be pasted into the CLI.
+!
+! Port plan (see docs/Design-Change-All-Ethernet.md):
+!   G0/0    802.1Q trunk to SW-TCH Fa0/7
+!     .20   VLAN 20  Teachers' LAN        192.168.20.1/24
+!     .12   VLAN 12  WAN to LIB-R1 G0/1   10.0.12.2/30 (via SW-TCH)
+!   G0/1    WAN to LAB-R3 G0/0.23         10.0.23.1/30 (via SW-LAB Fa0/8)
 ! ============================================================
 enable
 configure terminal
@@ -19,22 +25,30 @@ enable secret class123
 banner motd # TCH-R2 - Teachers room router. Authorized access only. #
 !
 ! ---------- Interfaces ----------
+! G0/0 carries two VLANs, so the IPs live on its subinterfaces.
 interface GigabitEthernet0/0
- description LAN - Teachers switch SW-TCH Gi0/1
+ description Trunk to SW-TCH Fa0/7 (VLAN 20 LAN, VLAN 12 WAN to LIB-R1)
+ no ip address
+ no shutdown
+ exit
+!
+interface GigabitEthernet0/0.20
+ description LAN - Teachers room (VLAN 20)
+ encapsulation dot1Q 20
  ip address 192.168.20.1 255.255.255.0
- no shutdown
  exit
 !
-interface Serial0/0/0
- description WAN Serial - to LIB-R1 S0/0/0 (this end is DTE)
+interface GigabitEthernet0/0.12
+ description WAN - to LIB-R1 G0/1 through SW-TCH (VLAN 12)
+ encapsulation dot1Q 12
  ip address 10.0.12.2 255.255.255.252
- no shutdown
  exit
 !
-interface Serial0/0/1
- description WAN Serial - to LAB-R3 S0/0/0 (this end is DCE)
+! G0/1 is a whole physical port: T3 shuts it, and its %LINK lines
+! give parse_rip_debug.py the start time.
+interface GigabitEthernet0/1
+ description WAN - to LAB-R3 G0/0.23 through SW-LAB Fa0/8 (VLAN 23)
  ip address 10.0.23.1 255.255.255.252
- clock rate 64000
  no shutdown
  exit
 !
@@ -51,7 +65,7 @@ router rip
  no auto-summary
  network 10.0.0.0
  network 192.168.20.0
- passive-interface GigabitEthernet0/0
+ passive-interface GigabitEthernet0/0.20
  exit
 !
 ! ---------- SSH for Python automation (netmiko) ----------

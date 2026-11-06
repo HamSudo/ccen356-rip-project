@@ -1,0 +1,71 @@
+
+Router>enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname LIB-R1
+LIB-R1(config)#no ip domain-lookup
+LIB-R1(config)#service password-encryption
+LIB-R1(config)#enable secret class123
+LIB-R1(config)#banner motd # LIB-R1 - Library router. Authorized access only.$ # LIB-R1 - Library router. Authorized access only.          #
+LIB-R1(config)#interface GigabitEthernet0/0
+LIB-R1(config-if)# description Trunk to SW-LIB Fa0/7 (VLAN 10 LAN, VLAN 13 WA$n Trunk to SW-LIB Fa0/7 (VLAN 10 LAN, VLAN 13 WAN          to LAB-R SW-LIB Fa0/7 (VLAN 10 LAN, VLAN 13 WAN to LAB-R3         )
+LIB-R1(config-if)# no ip address
+LIB-R1(config-if)# no shutdown
+LIB-R1(config-if)# exit
+LIB-R1(config)#interface GigabitEthernet0/0.10
+LIB-R1(config-subif)# description LAN - Library (VLAN 10)
+LIB-R1(config-subif)# encapsulation dot1Q 1
+*Nov  6 10:31:55.851: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to down0
+LIB-R1(config-subif)# ip address 192.168.10.1 255.255.255.0
+LIB-R1(config-subif)#
+*Nov  6 10:31:58.259: %LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to up
+*Nov  6 10:31:59.259: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up exit
+LIB-R1(config)#interface GigabitEthernet0/0.13
+LIB-R1(config-subif)# description WAN - to LAB-R3 G0/1 through SW-LIB (VLAN 1$n WAN - to LAB-R3 G0/1 through SW-LIB (VLAN 13         )
+LIB-R1(config-subif)# encapsulation dot1Q 13
+LIB-R1(config-subif)# ip address 10.0.13.1 255.255.255.252
+LIB-R1(config-subif)# exit
+LIB-R1(config)#interface GigabitEthernet0/1
+LIB-R1(config-if)# description WAN - to TCH-R2 G0/0.12 through SW-TCH Fa0/8 ($n WAN - to TCH-R2 G0/0.12 through SW-TCH Fa0/8 (V         LAN 12)
+LIB-R1(config-if)# ip address 10.0.12.1 255.255.255.252
+LIB-R1(config-if)# no shutdown
+LIB-R1(config-if)# exit
+LIB-R1(config)#ip dhcp excluded-address 192.168.10.1 192.168.10.20
+LIB-R1(config)#ip dhcp pool LIB-LAN
+LIB-R1(dhcp-config)#
+*Nov  6 10:32:11.451: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+*Nov  6 10:32:12.451: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up network 192.168.10.0 255.255.255.0
+LIB-R1(dhcp-config)# default-router 192.168.10.1
+LIB-R1(dhcp-config)# exit
+LIB-R1(config)#router rip
+LIB-R1(config-router)# version 2
+LIB-R1(config-router)# no auto-summary
+LIB-R1(config-router)# network 10.0.0.0
+LIB-R1(config-router)# network 192.168.10.0
+LIB-R1(config-router)# passive-interface GigabitEthernet0/0.10
+LIB-R1(config-router)# exit
+LIB-R1(config)#ip domain-name school.local
+LIB-R1(config)#username admin privilege 15 secret Admin@123
+LIB-R1(config)#crypto key generate rsa general-keys modulus 1024
+The name for the keys will be: LIB-R1.school.local
+
+% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]
+
+LIB-R1(config)#ip ssh version 2
+LIB-R1(config)#
+*Nov  6 10:32:27.187: %SSH-5-ENABLED: SSH 1.99 has been enabledline console 0
+LIB-R1(config-line)# password cisco
+LIB-R1(config-line)# login
+LIB-R1(config-line)# logging synchronous
+LIB-R1(config-line)# exit
+LIB-R1(config)#line vty 0 4
+LIB-R1(config-line)# login local
+LIB-R1(config-line)# transport input ssh
+LIB-R1(config-line)# exit
+LIB-R1(config)#end
+LIB-R1#write memory
+Building configuration...
+
+*Nov  6 10:32:37.615: %SYS-5-CONFIG_I: Configured from console by console[OK]
+LIB-R1#

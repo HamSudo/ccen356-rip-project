@@ -1,0 +1,30 @@
+{
+  "router": "LIB-R1",
+  "label": "T5-run3",
+  "mode": "buffer",
+  "duration_s": 420.0,
+  "capture_file": "D:\\ccen356-rip-project\\data\\debug_logs\\T5-run3_LIB-R1.txt",
+  "laptop_start": "2026-11-06T19:04:34.247",
+  "warnings": [],
+  "undebug_ok": true,
+  "source": "measured",
+  "clock_start": {
+    "laptop_sent": "2026-11-06T19:04:35.128",
+    "laptop_received": "2026-11-06T19:04:35.211",
+    "router_text": "19:04:35.043 UTC Fri Nov 6 2026",
+    "router_time": "2026-11-06T19:04:35.043",
+    "offset_s": -0.127,
+    "uncertainty_s": 0.042,
+    "clock_set": true
+  },
+  "clock_end": {
+    "laptop_sent": "2026-11-06T19:11:49.915",
+    "laptop_received": "2026-11-06T19:11:49.999",
+    "router_text": "19:11:49.827 UTC Fri Nov 6 2026",
+    "router_time": "2026-11-06T19:11:49.827",
+    "offset_s": -0.131,
+    "uncertainty_s": 0.042,
+    "clock_set": true
+  },
+  "laptop_end": "2026-11-06T19:11:50.024"
+}

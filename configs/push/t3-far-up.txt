@@ -1,0 +1,4 @@
+! Restore after T3: bring LAB-R3's end of the TCH-LAB link back.
+! Push to LAB-R3 with --no-save, then 'no shutdown' TCH-R2 G0/1 on its console.
+interface GigabitEthernet0/0.23
+ no shutdown

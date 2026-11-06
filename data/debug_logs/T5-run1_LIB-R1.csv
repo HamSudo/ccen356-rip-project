@@ -1,0 +1,5 @@
+time,kind,interface,peer,update,network,metric,detail
+2026-11-06T18:31:10.779,received,GigabitEthernet0/0.13,10.0.13.2,,,,
+2026-11-06T18:34:19.499,route_delete,,10.0.13.2,,192.168.30.0,,
+2026-11-06T18:35:19.535,route_delete,,,,192.168.30.0/24,,
+2026-11-06T18:35:31.039,route_add,,10.0.12.2,,192.168.30.0/24,2,

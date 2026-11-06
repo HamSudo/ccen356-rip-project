@@ -1,0 +1,13 @@
+! T5-run1 debug capture for LIB-R1: PARTIAL RECOVERY.
+! The full capture (data/debug_logs/T5-run1_LIB-R1.txt/.csv/.meta.json) was
+! deleted from the laptop during the session (between ~18:45 and 19:00 on
+! 6 Nov 2026), and LIB-R1's log buffer was cleared when T5-run2 started.
+! The four lines below are copied verbatim from the original file, as read and
+! printed (grep of the file) at ~18:4x, before it was deleted. They are the
+! lines the convergence measurement uses: the last update heard from LAB-R3
+! (10.0.13.2), the invalid-timer delete, the flush, and the new route install.
+! The rest of the capture (other updates, route entry lines) is not available.
+Nov  6 18:31:10.779: RIP: received v2 update from 10.0.13.2 on GigabitEthernet0/0.13
+Nov  6 18:34:19.499: RT: delete route to 192.168.30.0 via 10.0.13.2, rip metric [120/1]
+Nov  6 18:35:19.535: RT: delete network route to 192.168.30.0/24
+Nov  6 18:35:31.039: RT: add 192.168.30.0/24 via 10.0.12.2, rip metric [120/2]

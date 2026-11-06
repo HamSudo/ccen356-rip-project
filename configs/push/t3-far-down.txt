@@ -1,0 +1,6 @@
+! T3: far end of the TCH-LAB link. Push to LAB-R3 with --no-save right after
+! TCH-R2 G0/1 is shut on its console. The link runs through SW-LAB, so
+! LAB-R3 would not notice TCH-R2's port going down; shutting this end too
+! makes the test behave like a cut cable.
+interface GigabitEthernet0/0.23
+ shutdown

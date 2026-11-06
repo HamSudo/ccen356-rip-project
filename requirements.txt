@@ -1,3 +1,8 @@
 netmiko>=4.3
+# The lab 2901s (IOS 15.0) only offer SHA-1 SSH key exchange
+# (diffie-hellman-group14-sha1 / group-exchange-sha1). paramiko 5.x removed
+# those, so netmiko fails with "no acceptable kex algorithm". 3.5.1 still has
+# them and is the lowest version netmiko 4.8 accepts.
+paramiko==3.5.1
 matplotlib>=3.8
 pytest>=8.0

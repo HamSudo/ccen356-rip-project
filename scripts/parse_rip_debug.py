@@ -26,8 +26,12 @@ between routers and the laptop do not matter.
 import argparse
 import csv
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
+
+# How far before the %LINK line a route delete still counts as the start
+# of a failure (IOS logs a shutdown ~2 s after acting on it).
+LINK_LOG_DELAY = timedelta(seconds=5)
 
 # '*Oct 21 10:15:02.123: ' from 'service timestamps debug datetime msec'.
 # '*' means the router clock was never set; the year is optional.
@@ -146,6 +150,16 @@ def convergence(events, network, metric, silent_peer=None):
         if not links:
             return None
         start = links[0]
+        # On a 'shutdown', IOS deletes the routes through that interface at
+        # once but prints the %LINK line about 2 s later (seen on the lab
+        # 2901s: RT: del at 16:25:28.2, %LINK at 16:25:30.2). So a route
+        # delete in the few seconds before the %LINK line is the real start.
+        # T4 (no shutdown) has no delete before its %LINK line, so it keeps
+        # the link event.
+        early = [e for e in timed if e["kind"] == "route_delete"
+                 and timedelta(0) < start["time"] - e["time"] <= LINK_LOG_DELAY]
+        if early:
+            start = early[0]
         after = [e for e in adds if e["time"] >= start["time"]]
         if not after:
             return None

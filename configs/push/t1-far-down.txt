@@ -1,0 +1,6 @@
+! T1: far end of the LIB-TCH link. Push to TCH-R2 with --no-save right after
+! LIB-R1 G0/1 is shut on its console. The link runs through SW-TCH, so
+! TCH-R2 would not notice LIB-R1's port going down; shutting this end too
+! makes the test behave like a cut cable (both routers drop the link).
+interface GigabitEthernet0/0.12
+ shutdown

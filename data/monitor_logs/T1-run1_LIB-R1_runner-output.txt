@@ -1,0 +1,67 @@
+! T1-run1 (LIB-R1), 6 Nov 2026: the run_experiment.py output as printed in
+! Window A. The monitor's own CSV/summary files for this run were overwritten
+! when the next run was started with '--run 1' by mistake; these printed
+! lines are the remaining record of its monitor figures.
+
+PS D:\ccen356-rip-project> python scripts/run_experiment.py T1 --run 1 --duration 120
+
+============================================================
+  T1-run1: Library-Teachers link down  (measured router: LIB-R1)
+============================================================
+  Note: SSH from the LAB LAN to LIB-R1 runs over LAB-R3 G0/1, so the session stays up.
+
+[1/6] Taking before-snapshot (T1-run1-before)...
+  LIB-R1: 4 routes
+  TCH-R2: 4 routes
+  LAB-R3: 4 routes
+  Precondition: 192.168.20.0/24 on LIB-R1 is at metric 1 (ready)
+
+[2/6] Enabling 'debug ip rip' + 'debug ip routing' on LIB-R1...
+
+[3/6] Operator action required during the run:
+    On the LIB-R1 console, on 'go':
+      configure terminal
+      interface GigabitEthernet0/1
+      shutdown
+      end
+    Right after, far end (second terminal):
+      python scripts/push_config.py configs/push/t1-far-down.txt TCH-R2 --no-save
+
+  Wait ~5 s after monitoring starts, apply the action above,
+  and press Enter in this window right as you apply it.
+
+[4/6] Starting route monitor on LIB-R1 for 120 s...
+[16:25:12.265] baseline: 10.0.23.0/30=via 10.0.12.2 (GigabitEthernet0/1) m1 + via 10.0.13.2 (GigabitEthernet0/0.13) m1; 192.168.20.0/24=via 10.0.12.2 (GigabitEthernet0/1) m1; 192.168.30.0/24=via 10.0.13.2 (GigabitEthernet0/0.13) m1
+[16:25:29.271] 10.0.23.0/30 route_changed  via 10.0.12.2 (GigabitEthernet0/1) m1 + via 10.0.13.2 (GigabitEthernet0/0.13) m1 -> via 10.0.13.2 (GigabitEthernet0/0.13) m1
+[16:25:29.271] 192.168.20.0/24 route_lost  via 10.0.12.2 (GigabitEthernet0/1) m1 -> -
+
+[16:25:31.079] mark (+0.0 s after mark) failure applied
+[16:25:36.271] 10.0.12.0/30 route_added  - -> via 10.0.13.2 (GigabitEthernet0/0.13) m2 (+5.192 s after mark)
+[16:25:36.271] 192.168.20.0/24 route_restored  - -> via 10.0.13.2 (GigabitEthernet0/0.13) m2 (+5.192 s after mark)
+[16:25:47.273] 10.0.12.0/30 route_lost  via 10.0.13.2 (GigabitEthernet0/0.13) m2 -> - (+16.194 s after mark)
+[16:25:36.271] 192.168.20.0/24 converged (+5.192 s after mark) stable for 35 s (confirmed at 16:26:12.266)
+
+Polls: 120 (0 failed), real interval mean 1.0 s / max 1.015 s, 0 polls took longer than 1 s
+Mark: 2026-11-06T16:25:31.079
+First change: 2026-11-06T16:25:36.271, 5.192 s after mark  (192.168.20.0/24)
+Converged: 2026-11-06T16:25:36.271, 5.192 s after mark  (192.168.20.0/24)
+Saved D:\ccen356-rip-project\data\monitor_logs\T1-run1_LIB-R1.csv
+
+[5/6] Reading debug buffer from LIB-R1 and running 'undebug all'...
+  Debug start: 16:25:30.219  link         GigabitEthernet0/1 administratively down
+  Debug end:   16:25:35.327  route_add    192.168.20.0/24 via 10.0.13.2 metric 2
+  Debug convergence: 5.108 s
+
+[6/6] Taking after-snapshot (T1-run1-after) and comparing routes...
+  LIB-R1: 3 routes
+  TCH-R2: 3 routes
+  LAB-R3: 2 routes
+  LAB-R3 REMOVED 10.0.12.0/30: via 10.0.13.1 (Gi0/1) metric 1 + via 10.0.23.1 (Gi0/0.23) metric 1 -> -
+  LIB-R1 CHANGED 10.0.23.0/30: via 10.0.12.2 (Gi0/1) metric 1 + via 10.0.13.2 (Gi0/0.13) metric 1 -> via 10.0.13.2 (Gi0/0.13) metric 1
+  LIB-R1 CHANGED 192.168.20.0/24: via 10.0.12.2 (Gi0/1) metric 1 -> via 10.0.13.2 (Gi0/0.13) metric 2
+  TCH-R2 CHANGED 10.0.13.0/30: via 10.0.12.1 (Gi0/0.12) metric 1 + via 10.0.23.2 (Gi0/1) metric 1 -> via 10.0.23.2 (Gi0/1) metric 1
+  TCH-R2 CHANGED 192.168.10.0/24: via 10.0.12.1 (Gi0/0.12) metric 1 -> via 10.0.23.2 (Gi0/1) metric 2
+
+! Note: 'Debug convergence: 5.108 s' above was printed before the parser fix
+! that starts the clock at the first 'RT: del' (16:25:28.223); the corrected
+! figure is 7.104 s.
