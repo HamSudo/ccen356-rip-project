@@ -67,11 +67,11 @@ Everything in the report and the repo must come from the real routers. The files
 
    | Router | Console on | Used for |
    |---|---|---|
-   | LIB-R1 | Mouhamed's laptop (USB console, COM7 in PuTTY) | T1/T4 measured end, T2 far end |
-   | TCH-R2 | a lab PC (`sudo screen /dev/ttyUSB0 9600`) | T3 measured end |
-   | LAB-R3 | a lab PC | T2 measured end |
+   | LIB-R1 | Mouhamed's laptop (USB console, COM7/COM8 in PuTTY) | T1/T4 measured end, T2 far end |
+   | TCH-R2 | the same cable, moved for T3 (or a lab PC: `sudo screen /dev/ttyUSB0 9600`) | T3 measured end |
+   | LAB-R3 | not needed | T2's measured end is pushed from the laptop (LAB-R3 is on the laptop's own LAN) |
 
-   The PC that runs the Library ping can also hold a console. Use two terminal windows.
+   In the lab one console cable was enough: it stayed on LIB-R1 for T1, T4 and T2, then moved to TCH-R2 for T3. T5 needs no console.
 
 ### A3. Open a console to a device
 
@@ -494,12 +494,13 @@ The last command must list **sent** and **received** updates with their routes. 
 
 **Always pass `--duration`.** The monitor only counts a run as converged after the route has held its new state for 35 s. Shorter runs can end before that.
 
-| Tests | `--duration` |
+| Tests | `--duration` used in the lab |
 |---|---|
-| T1, T2, T3, T4 | `120` |
-| T5 | `420` |
+| T1, T4 | `120` (the default) |
+| T2, T3 | `90` (enough: the worst run converged 31 s after the mark, plus the 35 s stability check) |
+| T5 | `420` (the default) |
 
-**Run filenames:** each run saves to `data/debug_logs/Tn-runN_<router>.txt`. Never reuse a run number; a repeat overwrites the earlier file. If a run goes wrong, re-run the **same** number, and write "redone" in the Notes column of the results sheet.
+**Run filenames:** each run saves to `data/debug_logs/Tn-runN_<router>.txt`. The runner refuses a run number whose files already exist. If a run goes wrong and you redo it, add `--overwrite` to the same command, and write "redone" in the Notes column of the results sheet. **Never delete files from `data/` by hand**: in the lab a whole `data/debug_logs/` folder was lost that way.
 
 **The countdown:** at the failure moment, Zayed counts out loud: "3, 2, 1, **go**". On "go", the person at the **measured router's console** presses Enter on `shutdown` (or `no shutdown`) and Zayed presses Enter on the runner window together. A late Enter makes the monitor's numbers wrong. If it was late, write it in Notes.
 
@@ -559,11 +560,11 @@ In T4, the far end (TCH-R2) comes up first, so T4 only measures LIB-R1's port co
 
 | Step | What |
 |---|---|
-| Command | `python scripts/run_experiment.py T2 --run N --duration 120` |
-| On "go" (**LAB-R3 console**) | `interface GigabitEthernet0/1` → **`shutdown`** |
-| Right after "go" (**LIB-R1 console**) | `configure terminal` → `interface GigabitEthernet0/0.13` → **`shutdown`** → `end`. Use the console here: SSH to LIB-R1 runs over this link |
+| Command | `python scripts/run_experiment.py T2 --run N --duration 90` |
+| On "go" (**Window B**, measured end) | `python scripts/push_config.py configs/push/t2-measured-down.txt LAB-R3 --no-save`; press Enter in Window B and Window A together |
+| As soon as Window B shows `LAB-R3#` (**LIB-R1 console**, far end) | `configure terminal` → `interface GigabitEthernet0/0.13` → **`shutdown`** → `end`. Use the console here: SSH to LIB-R1 runs over this link |
 | Expected | LAB-R3: `192.168.10.0/24 [120/2] via 10.0.23.1` |
-| Restore after the run | LIB-R1 console: `interface GigabitEthernet0/0.13` → `no shutdown`. Then LAB-R3 console: `interface GigabitEthernet0/1` → `no shutdown` |
+| Restore after the run | LIB-R1 console: `interface GigabitEthernet0/0.13` → `no shutdown`. Then Window B: `python scripts/push_config.py configs/push/t2-measured-up.txt LAB-R3 --no-save` |
 | Before the next run | Wait **45 s**. On LAB-R3, `show ip route rip` shows `192.168.10.0/24 [120/1] via 10.0.13.1` |
 | Ping (Library PC) | `192.168.30.1` |
 
@@ -573,7 +574,7 @@ The laptop's SSH session to LAB-R3 (the measured router) stays up in T2.
 
 | Step | What |
 |---|---|
-| Command | `python scripts/run_experiment.py T3 --run N --duration 120` |
+| Command | `python scripts/run_experiment.py T3 --run N --duration 90` |
 | On "go" (**TCH-R2 console**) | `interface GigabitEthernet0/1` → **`shutdown`** |
 | Right after "go" | Mouhamed: `python scripts/push_config.py configs/push/t3-far-down.txt LAB-R3 --no-save` |
 | Expected | TCH-R2: `192.168.30.0/24 [120/2] via 10.0.12.1` |
@@ -651,7 +652,7 @@ Count `Destination Host Unreachable` lines as lost too. They come from a router 
 
 The first reply with the new TTL marks when the return path changed, a fourth timing source alongside the debug log, the monitor and the ping loss. The T5 row is direct evidence of the asymmetric routing that section 6b discusses.
 
-**Name each file after its run** (`T1-run1_ping.txt`, `T4-run1_ping.txt`, ...). At the end, copy them to the repo's `data/ping_logs/` with a USB stick. If that isn't possible, photograph the counts and write them on the sheet.
+**Name each file after its run** (`T1-run1_ping.txt`, `T4-run1_ping.txt`, ...). **Photograph the count and the before/after traceroutes for every run**; the laptop saves the photos as `data/ping_logs/photos/<Tn-runN>_before.jpg` / `_after.jpg`. (In the lab the ping text files stayed on the lab PCs; the photos are the record.)
 
 **Optional third method (the Expt 5 way), if there's time:** on the ping PC, run Wireshark with the filter `icmp` during one T1 run. Record T1 as the time of the frame after the last reply before the outage, and T2 as the time of the frame after the last `Host unreachable`. T2 − T1 is the outage as the PC saw it. Save the `.pcapng` to `data/ping_logs/`.
 
@@ -694,9 +695,9 @@ Check:
 
 ### H2. Build the results table and the charts
 
-Replace each `0` with the real count from the sheet:
+Replace each `0` with the real count from the sheet (counts already in `data/results.csv` are kept when you re-run without `--ping`):
 ```powershell
-python scripts/collect_results.py --ping T1-run1=0 T1-run2=0 T1-run3=0 T2-run1=0 T2-run2=0 T2-run3=0 T3-run1=0 T3-run2=0 T3-run3=0 T4-run1=0 T4-run2=0 T4-run3=0 T5-run1=0 T5-run2=0 T5-run3=0
+python scripts/collect_results.py --source measured --ping T1-run1=0 T1-run2=0 T1-run3=0 T2-run1=0 T2-run2=0 T2-run3=0 T3-run1=0 T3-run2=0 T3-run3=0 T4-run1=0 T4-run2=0 T4-run3=0 T5-run1=0 T5-run2=0 T5-run3=0
 python scripts/visualize.py
 ```
 Check that `data/charts/convergence_comparison.png` exists and has 5 bars.
@@ -715,9 +716,10 @@ git push
 
 ### H4. Leave the bench as you found it
 
-1. Disconnect the cables.
-2. Put the console cables back.
-3. Power off the devices if the lab rules say so.
+1. **Wipe all 6 devices** (after the push: the exports are already in the repo). On each: `erase startup-config`; on the switches also `delete flash:vlan.dat`; then `reload` and answer `no` to "Save?". Over the network, wipe every device first and then schedule the reloads together (`reload in 2`): reloading one switch cuts the path to the routers behind it.
+2. Put the laptop's Ethernet adapter back to DHCP: `netsh interface ipv4 set address name="Ethernet 4" dhcp` (admin PowerShell).
+3. Disconnect the cables and put the console cables back.
+4. Power off the devices if the lab rules say so.
 
 ---
 
@@ -729,21 +731,23 @@ git push
 | Verification outputs | `data/verification/<router>.txt` | 3 |
 | RIP push outputs | `data/verification/push_rip_<router>.txt` | 3 |
 | Normal-state RIP update captures | `data/debug_logs/T0-updates_<router>.txt` / `.meta.json` | 3 |
-| Photos of the rack and cabling | `topology/` | a few |
-| Before/after snapshots | `data/snapshots/*.json` + `data/routes.csv` | 1 (T0) + 30 + T-end |
-| Debug captures and parsed CSVs | `data/debug_logs/Tn-runN_<router>.txt` / `.csv` / `.meta.json` | 15 of each |
-| Monitor logs | `data/monitor_logs/Tn-runN_<router>.csv` / `_polls.csv` / `_summary.json` | 15 of each |
-| Ping logs | `data/ping_logs/Tn-runN_ping.txt` | 15 |
+| Photos of the rack and cabling | `topology/` | a few (still to add) |
+| Before/after snapshots | `data/snapshots/*.json` + `data/routes.csv` | T0 + 2 per run + T-end |
+| Debug captures and parsed CSVs | `data/debug_logs/Tn-runN_<router>.txt` / `.csv` / `.meta.json` | 16 runs (T1 ran 4 times) |
+| Monitor logs | `data/monitor_logs/Tn-runN_<router>.csv` / `_polls.csv` / `_summary.json` | 16 runs |
+| Ping and traceroute photos | `data/ping_logs/photos/Tn-runN_before.jpg` / `_after.jpg` | 2 per run |
+| Device screenshots and verification | `data/verification/` | 6 screenshots + outputs |
 | Results table | `data/results.csv` + the Markdown table printed by `collect_results.py` | 1 |
 | Charts | `data/charts/convergence_comparison.png`, `timeline_*.png` | 1 + timelines |
-| Filled-in results sheet | photo, or this file | 1 |
 
-With these, Section 6a's `[LAB_VALUE]` placeholders can be filled in, and Abdulrahman can write 6b.
+Outcome of the 6 Nov session: all of the above exist (rack photos aside); the results are written up in [`Section-6a-Link-Failure-Tests-and-Results.md`](Section-6a-Link-Failure-Tests-and-Results.md) and the report evidence is chosen in [`Report-Evidence-Guide.md`](Report-Evidence-Guide.md).
 
 ## Course brief → evidence from this session
 
 | Brief requirement | Comes from |
 |---|---|
+| A. 3 Cisco 2901 routers, 3 Cisco switches, two redundant paths, Ethernet and serial links "where applicable" | The triangle in `docs/Design-Change-All-Ethernet.md`; all-Ethernet because the lab 2901s have no serial modules (checked with `show inventory`) |
+| B. RIP version 2, network statements, no auto-summary | `configs/source/`, `configs/exports/`, `show ip protocols` in `data/verification/` |
 | Verify routing tables (`show ip route`) | F4 `data/verification/`, T0 snapshot |
 | Capture RIP updates with `debug ip rip` and Python | F6 `T0-updates_*`, every `Tn-runN` debug capture |
 | Connect to routers using SSH (netmiko) | F1 `connect_test.py` |
@@ -752,6 +756,7 @@ With these, Section 6a's `[LAB_VALUE]` placeholders can be filled in, and Abdulr
 | Analyse routing changes after link failures | T1 to T5 diffs from `compare_routes.py`, `data/results.csv` |
 | Report: routing table snapshots, convergence time, route changes | phases D, G and H |
 | Repo: configuration files (.txt exports from routers) | F4 `configs/exports/` |
+| Parse routing tables and logs | `get_routes.parse_routes()` (routing tables), `parse_rip_debug.py` (debug logs) |
 | Visualise routing behaviour | `data/charts/` from `visualize.py` |
 
 This session does not cover the topology diagram (Saif), "Limitations of RIP" (Abdulrahman, no lab data needed) or the demo. If time is left at the end, do one rehearsal of the demo run-sheet on the real routers.

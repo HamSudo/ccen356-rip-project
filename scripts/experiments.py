@@ -27,7 +27,7 @@ class Experiment:
     next_hop: str = ""        # its next hop once converged
     before_metric: int = 0    # its metric before the action (precondition check)
     silent_peer: str = ""     # T5 only: neighbour that stops sending updates
-    duration: int = 60        # seconds to record (plan: 60 s, about 300 s for T5)
+    duration: int = 120       # seconds to record; the lab used 120 (T1/T4), 90 (T2/T3), 420 (T5)
     pre_roll: int = 5         # seconds to record before the action
     action: tuple = ()        # what the operator does, line by line
     restore: tuple = ()       # how to undo it before the next run
@@ -101,7 +101,7 @@ EXPERIMENTS = {
     "T5": Experiment(
         test="T5", title="Silent failure (passive G0/1)", router="LIB-R1",
         network="192.168.30.0/24", metric=2, next_hop="10.0.12.2", before_metric=1,
-        silent_peer="10.0.13.2", duration=330, pre_roll=35,
+        silent_peer="10.0.13.2", duration=420, pre_roll=35,
         action=("Push the T5 change to LAB-R3 (does NOT save it):",
                 "  python scripts/push_config.py configs/push/t5-start.txt LAB-R3 --no-save"),
         restore=("  python scripts/push_config.py configs/push/t5-stop.txt LAB-R3 --no-save",

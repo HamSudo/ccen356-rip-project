@@ -20,18 +20,20 @@ About the times (please read before using them in the report):
     ('obs_time'). It is when the change was SEEN, not when it happened.
     The change happened somewhere inside [window_start, obs_time], i.e.
     after the previous poll was sent; 'window_s' is the width of that window.
-  * One poll is not one second: on a 64 kbps serial path 'show ip route rip'
-    can take longer than that. The real interval of every poll is logged.
+  * One poll is not one second: a slow or rerouting path can make
+    'show ip route rip' take longer. The real interval of every poll is logged.
   * A 'mark' is the operator pressing Enter when the failure is applied
-    (--mark-on-enter). It is a human reaction time, accurate to about 1 s.
-    The exact failure time is the %LINK/%LINEPROTO line in the router's own
-    debug log (capture_rip_debug.py + parse_rip_debug.py).
+    (--mark-on-enter). It is a human reaction time: in the lab it landed
+    0.3-4 s from the real failure. The exact failure time is the first
+    'RT: del' (or %LINK) line in the router's own debug log
+    (capture_rip_debug.py + parse_rip_debug.py).
   * 'converged' = the watched route reached the expected metric/next hop and
     then stayed unchanged for --stable-for seconds (default 35 s, just over
     one 30 s RIP update period). Its time is when that final state was first
     seen, not when the stability window ended.
 
-If the session drops (T2 and T3 cut the SSH path) it logs 'session_lost',
+If the session drops (T3 cuts the SSH path to TCH-R2; T5 briefly leaves
+LIB-R1 with no route back between the flush and the new route) it logs 'session_lost',
 keeps trying to reconnect, and logs 'session_restored' with the gap.
 """
 

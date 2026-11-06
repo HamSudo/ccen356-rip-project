@@ -1,6 +1,6 @@
 # Design change: all-Ethernet build for the lab 2901s
 
-*Draft, 5 Nov 2026. Replaces the topology, cabling and configs in Saif's [Part 1 design doc](Part1-Network-Design-and-RIP-Configuration.pdf). The IP plan, RIP settings, SSH settings and test goals stay the same.*
+*5 Nov 2026; built and tested on the lab hardware on 6 Nov 2026. Replaces the topology, cabling and configs in Saif's [Part 1 design doc](Part1-Network-Design-and-RIP-Configuration.pdf). The IP plan, RIP settings, SSH settings and test goals stay the same.*
 
 ## Why the design has to change
 
@@ -70,7 +70,7 @@ Logically it is the same triangle as before:
 
 ## Switch ports
 
-The lab switches are Catalyst 3560-8PCs (FastEthernet0/1 to 0/8, plus one GigabitEthernet0/1 uplink we leave unused). A 3560 only accepts `switchport mode trunk` after `switchport trunk encapsulation dot1q`, so the configs set it first. The last two ports on every switch face the routers: **Fa0/7** is the trunk to the room's own router and **Fa0/8** is the WAN link from the neighbour. The router links therefore run at 100 Mbps, which is plenty for RIP and the tests.
+The lab switches are Catalyst 3560-8PCs (FastEthernet0/1 to 0/8, plus one GigabitEthernet0/1 uplink we leave unused). A 3560 only accepts `switchport mode trunk` after `switchport trunk encapsulation dot1q`, so the configs set it first. Their software (C3560-IPBASE) has no crypto, so the switches take Telnet for remote login instead of SSH; the Python scripts only SSH to the routers. The last two ports on every switch face the routers: **Fa0/7** is the trunk to the room's own router and **Fa0/8** is the WAN link from the neighbour. The router links therefore run at 100 Mbps, which is plenty for RIP and the tests.
 
 | Switch | Fa0/7 (trunk to own router G0/0) | Fa0/8 (access, neighbour's G0/1) | End devices (access) | Mgmt IP |
 |---|---|---|---|---|
@@ -121,17 +121,17 @@ R    192.168.20.0/24 [120/1] via 10.0.23.1, GigabitEthernet0/0.23
 ## What changes in the tests, and why
 
 **1. Both ends of the link are shut.** Each WAN link now runs through a switch. When one router's port goes down, the switch port goes down, but the router at the other end still sees its own port up. It only gives up on the link when RIP's 180 s invalid timer expires, so every test would partly turn into T5. To make a failure behave like a cut cable, the tests shut **both ends**:
-- the measured router's end on its console, on "go";
+- the measured router's end on "go": on its console, or pushed from the laptop when the laptop's SSH path does not cross the link (T2);
 - the far end a few seconds later, with `push_config.py` (or a console where SSH would go over the link being cut).
 
-**2. The measured end is always a physical port.** We tested this on LIB-R1 on 5 Nov: shutting a **subinterface** logs **no** `%LINK` / `%LINEPROTO` line, only `%SYS-5-CONFIG_I` when you type `end`. `parse_rip_debug.py` starts its clock on the `%LINK` line, so the measured router must be the one whose end is a physical G0/1 port. Because of this, **T2 is now measured on LAB-R3**, the physical end of the Library–Lab link, instead of LIB-R1.
+**2. The measured end is always a physical port.** We tested this on LIB-R1 on 5 Nov: shutting a **subinterface** logs **no** `%LINK` / `%LINEPROTO` line, only `%SYS-5-CONFIG_I` when you type `end`. `parse_rip_debug.py` finds the failure by its `%LINK` line (and starts the clock at the `RT: del` just before it, because IOS logs `%LINK` about 2 s after deleting the routes), so the measured router must be the one whose end is a physical G0/1 port. Because of this, **T2 is now measured on LAB-R3**, the physical end of the Library–Lab link, instead of LIB-R1.
 
-| Test | Measured router | Measured end (console, on "go") | Far end (just after) | Route watched → expected |
+| Test | Measured router | Measured end (on "go") | Far end (just after) | Route watched → expected |
 |---|---|---|---|---|
-| T1 | LIB-R1 | LIB-R1 G0/1 `shutdown` | TCH-R2 G0/0.12, `push_config.py configs/push/t1-far-down.txt TCH-R2 --no-save` | 192.168.20.0/24 → via 10.0.13.2, metric 2 |
-| T2 | **LAB-R3** | LAB-R3 G0/1 `shutdown` | LIB-R1 G0/0.13 `shutdown` **on the LIB-R1 console** (SSH to LIB-R1 uses this link) | **192.168.10.0/24 → via 10.0.23.1, metric 2** |
-| T3 | TCH-R2 | TCH-R2 G0/1 `shutdown` | LAB-R3 G0/0.23, `push_config.py configs/push/t3-far-down.txt LAB-R3 --no-save` | 192.168.30.0/24 → via 10.0.12.1, metric 2 |
-| T4 | LIB-R1 | LIB-R1 G0/1 `no shutdown` | **First, before "go":** `push_config.py configs/push/t1-far-up.txt TCH-R2 --no-save` | 192.168.20.0/24 → via 10.0.12.2, metric 1 |
+| T1 | LIB-R1 | LIB-R1 console: G0/1 `shutdown` | TCH-R2 G0/0.12, `push_config.py configs/push/t1-far-down.txt TCH-R2 --no-save` | 192.168.20.0/24 → via 10.0.13.2, metric 2 |
+| T2 | **LAB-R3** | LAB-R3 G0/1, `push_config.py configs/push/t2-measured-down.txt LAB-R3 --no-save` (LAB-R3 is on the laptop's LAN) | LIB-R1 G0/0.13 `shutdown` **on the LIB-R1 console** (SSH to LIB-R1 uses this link) | **192.168.10.0/24 → via 10.0.23.1, metric 2** |
+| T3 | TCH-R2 | TCH-R2 console: G0/1 `shutdown` | LAB-R3 G0/0.23, `push_config.py configs/push/t3-far-down.txt LAB-R3 --no-save` | 192.168.30.0/24 → via 10.0.12.1, metric 2 |
+| T4 | LIB-R1 | LIB-R1 console: G0/1 `no shutdown` | **First, before "go":** `push_config.py configs/push/t1-far-up.txt TCH-R2 --no-save` | 192.168.20.0/24 → via 10.0.12.2, metric 1 |
 | T5 | LIB-R1 | (no shutdown) `t5-start.txt` on LAB-R3 | none | 192.168.30.0/24 → via 10.0.12.2, metric 2 (unchanged) |
 
 Side effects:
@@ -157,6 +157,8 @@ The Packet Tracer file (`topology/school-rip.pkt`) should be rebuilt the same wa
 - `configs/source/*.txt`: all 6 paste-in configs
 - `configs/push/rip-*.txt`: passive interface `G0/0.x`
 - `configs/push/t1-far-down.txt`, `t1-far-up.txt`, `t3-far-down.txt`, `t3-far-up.txt`: new; they shut and restore the far end
+- `configs/push/t2-measured-down.txt`, `t2-measured-up.txt`: new; they shut and restore LAB-R3 G0/1 (T2 measured end)
+- `configs/source/SW-*.txt`: 3560-8PC ports (Fa0/7 trunk, Fa0/8 WAN), `switchport trunk encapsulation dot1q`, Telnet instead of SSH
 - `scripts/experiments.py`: T1 to T4 operator steps; T2 now measured on LAB-R3
 - `scripts/visualize.py`: chart labels say "link down" instead of "serial down"
 - `tests/test_visualize_and_results.py`: T2's new definition

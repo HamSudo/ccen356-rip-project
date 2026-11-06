@@ -8,9 +8,10 @@ passwords, so a change (new password, rebuilt lab) is made in one place.
     with connect("LIB-R1") as conn:
         print(conn.send_command("show ip route rip"))
 
-Each router is reached on its LAN gateway address (G0/0). The link-failure
-tests never touch G0/0, so every router stays reachable from AUTO-PC
-(192.168.30.20) as long as RIP still has some path to its LAN.
+Each router is reached on its LAN gateway address (the G0/0.10/.20/.30
+subinterface). The link-failure tests never touch the LAN, so every router
+stays reachable from AUTO-PC (192.168.30.20) as long as RIP still has some
+path to its LAN.
 """
 
 import os

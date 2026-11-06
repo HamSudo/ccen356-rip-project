@@ -26,7 +26,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CSV_FIELDS = ["time", "label", "router", "network", "metric", "next_hop", "interface", "status"]
 
 # A RIP route line, e.g.
-#   R     192.168.20.0/24 [120/1] via 10.0.12.2, 00:00:12, Serial0/0/0
+#   R     192.168.20.0/24 [120/1] via 10.0.12.2, 00:00:12, GigabitEthernet0/1
 # [120/1] is administrative distance / metric (hop count). The age
 # (00:00:12, time since the last update) is optional: Saif's expected tables
 # leave it out, real output has it.

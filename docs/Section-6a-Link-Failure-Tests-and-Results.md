@@ -1,26 +1,26 @@
 # Section 6a — Link-Failure Tests and Results
 
-> **Author:** Zayed (Measurement, Testing and Visualisation)  
-> **Status:** Draft ready for report integration. Placeholders marked `[LAB_VALUE: ...]` are filled automatically by running `python scripts/collect_results.py` and `python scripts/visualize.py` after the lab session.
+> **Author:** Zayed (Measurement, Testing and Visualisation)
+> **Status:** Results from the lab session on 6 Nov 2026 (Cisco 2901 routers, Catalyst 3560-8PC switches, all-Ethernet design). All values come from `data/results.csv`, built by `scripts/collect_results.py`.
 
 ---
 
 ## 6a.1 Purpose of the Experiments
 
-The three-router triangle between the Library (`LIB-R1`), the Teachers' room (`TCH-R2`), and the Laboratory (`LAB-R3`) gives every LAN (`192.168.10.0/24`, `192.168.20.0/24`, and `192.168.30.0/24`) two physical paths to every other LAN: a direct 1-hop path and a 2-hop backup path through the third router. Under normal operation (`T0`), RIPv2 installs the 1-hop path for each remote room LAN and two equal-cost 1-hop paths for the opposite WAN `/30` link.
+The three routers form a triangle between the Library (`LIB-R1`), the Teachers' room (`TCH-R2`) and the Laboratory (`LAB-R3`), so every room LAN (`192.168.10.0/24`, `192.168.20.0/24`, `192.168.30.0/24`) has two paths to every other LAN: a direct 1-hop path and a 2-hop backup through the third router. The lab routers have no serial modules, so the three WAN links are Ethernet VLANs carried through the room switches (VLAN 12, 13 and 23; see `docs/Design-Change-All-Ethernet.md`).
 
-The goal of the link-failure experiments (`T1` to `T5`) is to measure how quickly RIPv2 detects a failure, removes the broken route, and installs the 2-hop backup path across two very different failure modes:
+The tests measure how quickly RIPv2 removes a broken route and installs the backup, for two failure modes:
 
-1. **Direct interface state changes (`T1`–`T4`):** When a local serial or GigabitEthernet interface goes down (or comes back up in `T4`), Cisco IOS immediately notifies the routing table (`%LINK` / `%LINEPROTO`), deletes the affected 1-hop route, and sends a triggered ("flash") poisoned update (`metric 16`). However, because RIP does not keep a backup topology table in memory like OSPF or EIGRP, the router must still wait for its surviving neighbour's next periodic RIP update (sent every 30 s) before it can install the 2-hop alternative route.
-2. **Silent neighbour failure (`T5`):** When a neighbour stops sending RIP updates without the physical link going down (simulated by applying `passive-interface GigabitEthernet0/1` on `LAB-R3`), `LIB-R1` receives no link-down interrupt. Instead, it has to wait for RIP's timers to expire: the 180 s invalid timer (when the route enters hold-down as `is possibly down` at metric 16) and the 240 s flush timer (when the stale route is deleted so the 2-hop route from `TCH-R2` can be installed).
+1. **Link failures (`T1`–`T3`) and recovery (`T4`):** the router sees its own interface go down (or up), deletes the routes through it at once and sends a triggered update. RIP keeps no backup route, so the router then waits for its surviving neighbour's next periodic update (every 30 s) to learn the 2-hop path.
+2. **Silent neighbour failure (`T5`):** `LAB-R3` stops sending updates to `LIB-R1` (`passive-interface GigabitEthernet0/1`) while the link stays up. `LIB-R1` gets no interface event and waits for RIP's timers: 180 s invalid (route `possibly down`, metric 16), 240 s flush, then the next update from `TCH-R2`.
+
+Because each WAN link passes through a switch, a router does not see the far end's port go down. Every link test therefore shuts **both ends** of the link, as a cut cable would: the measured router's physical `G0/1` on "go", then the far end's subinterface a few seconds later.
 
 ---
 
 ## 6a.2 Test Methodology and Measurement Techniques
 
-To make sure random alignment with the 30-second periodic update timer does not skew our findings, each failure test (`T1`–`T5`) is executed **three independent times** (`Run 1`, `Run 2`, `Run 3`), and we record the individual values, the mean, and the min–max range.
-
-Before running the first test, we push [`configs/push/timestamps.txt`](../configs/push/timestamps.txt) to all three routers using [`scripts/push_config.py`](../scripts/push_config.py):
+Each test was run **three times** (`T1` four times: the extra cut put the link down again so the last `T4` run could start). Before the first test, [`configs/push/timestamps.txt`](../configs/push/timestamps.txt) was pushed to all three routers with [`scripts/push_config.py`](../scripts/push_config.py), and all router clocks were set to the laptop's time:
 
 ```text
 service timestamps debug datetime msec
@@ -28,103 +28,107 @@ service timestamps log datetime msec
 logging buffered 64000 debugging
 ```
 
-This configuration puts millisecond timestamps on every debug and syslog line and stores up to 64 KB of debugging output in router RAM so captures survive even if an SSH session drops during a test.
+Each run was driven by [`scripts/run_experiment.py`](../scripts/run_experiment.py), which takes a before-snapshot, checks the starting state, clears the log buffer, turns on `debug ip rip` and `debug ip routing`, runs the route monitor, reads the debug buffer back, turns debugging off, takes an after-snapshot and prints the route changes. Three measurements were taken:
 
-We measure convergence using **three complementary methods**:
-
-1. **Router-clock timestamped debug logs (Primary — Millisecond Precision):**  
-   Using [`scripts/capture_rip_debug.py`](../scripts/capture_rip_debug.py) (or [`scripts/run_experiment.py`](../scripts/run_experiment.py)), we clear the router's log buffer (`clear logging`) and enable both `debug ip rip` and `debug ip routing` on the affected router. After the run, the script sends `undebug all` and saves `show logging` to `data/debug_logs/<test>-run<n>_<router>.txt`.  
-   [`scripts/parse_rip_debug.py`](../scripts/parse_rip_debug.py) then calculates convergence entirely on **that single router's internal clock**:
-   - **Start time ($t_{\text{start}}$):** For `T1`–`T4`, the timestamp of the first `%LINK` / `%LINEPROTO` interface state-change line. For `T5` (where no interface goes down), the timestamp of the last `RIP: received v2 update` heard from the silent neighbour (`10.0.13.2`), which is the exact moment RIP's 180 s invalid timer starts counting.
-   - **End time ($t_{\text{end}}$):** The timestamp of the `RT: add <network> via <next_hop>, rip metric [120/<m>]` line emitted by `debug ip routing` when the new route is actually installed in the forwarding table (not merely when an update packet arrives, since backup advertisements arriving while a 1-hop route is still valid are ignored).
-   - **Convergence time:** $\Delta t = t_{\text{end}} - t_{\text{start}}$. Because both timestamps come from the same router, clock drift between routers and the laptop does not affect the measurement.
-
-2. **Python routing-table polling (`monitor_convergence.py` — ~1 s Granularity):**  
-   [`scripts/monitor_convergence.py`](../scripts/monitor_convergence.py) keeps an SSH session open to the measured router, runs `show ip route rip` in a loop (targeting 1.0 s intervals), and parses each response with `get_routes.parse_routes()`. Whenever a route disappears (`route_lost`), enters hold-down (`possibly_down`, metric 16), changes metric or next hop (`route_changed`), or reappears (`route_restored`), the script writes an event row to `data/monitor_logs/<test>-run<n>_<router>.csv` and logs every poll's actual send/receive duration to `<test>-run<n>_<router>_polls.csv`. It distinguishes the operator's keypress mark (`mark`), the first observed routing change (`first_change`), and the moment the target route reaches its expected metric/next hop and stays stable for at least one full 30 s update period (`converged`).
-
-3. **Continuous ICMP ping loss (`ping -t -w 1000`):**  
-   In parallel with the scripts, we run a continuous ping with a 1-second timeout (`ping -t -w 1000 <dest-ip>`) between rooms (replacing Windows' default 4-second timeout so each `Request timed out.` corresponds to roughly 1 second of data-plane outage).
+1. **Router debug log (primary, millisecond precision).** [`scripts/parse_rip_debug.py`](../scripts/parse_rip_debug.py) measures on the measured router's own clock:
+   - **Start:** for `T1`–`T3`, the first `RT: del` of the failed route. IOS deletes the routes the moment `shutdown` is entered but logs `%LINK-5-CHANGED` about 2 s later (16:25:28.223 vs 16:25:30.219 in `T1` run 1), so the `%LINK` line would understate convergence by 2 s. For `T4`, the `%LINK` line of the interface coming up. For `T5`, the last `RIP: received v2 update` from the silent neighbour (`10.0.13.2`), where the invalid timer starts.
+   - **End:** the `RT: add <network> via <next hop>, rip metric [120/<m>]` line where the new route is installed.
+2. **Python route monitor (about 1 s granularity).** [`scripts/monitor_convergence.py`](../scripts/monitor_convergence.py) polls `show ip route rip` once a second over one SSH session, logs every change, and counts a run as converged once the new route has held for 35 s. Its times are measured from the operator's Enter keypress, which landed 0.3–4 s from the real failure, so the monitor figures are a cross-check, not the result.
+3. **Ping loss and path, from a lab PC.** A continuous `ping -O -W 1` (Ubuntu, 1 s timeout) from the Library PC (Teachers' PC for `T3`) to the far router's LAN address, counted with `grep -cE "no answer yet|Unreachable"`, plus a `traceroute` before and after each run. The TTL of the replies shows the return path: 254 direct, 253 through the third router.
 
 ---
 
 ## 6a.3 Description of Each Test Scenario
 
-| Test | Measured Router | Target Route | How the Event Is Triggered | Expected Routing Behaviour |
+| Test | Measured router | Watched route | How the event is triggered | Expected behaviour |
 |---|---|---|---|---|
-| **T0** Baseline | All (`LIB-R1`, `TCH-R2`, `LAB-R3`) | All remote `/24` and `/30` | All interfaces up; run `get_routes.py T0-baseline` | Every router reaches the other two room LANs at metric 1 and has 2 equal-cost paths to the opposite WAN `/30`. |
-| **T1** Library–Teachers serial down | `LIB-R1` | `192.168.20.0/24` | On `LIB-R1`: `interface Serial0/0/0` $\rightarrow$ `shutdown` | `LIB-R1` immediately deletes the 1-hop route via `10.0.12.2` and installs `192.168.20.0/24` via `LAB-R3` (`10.0.13.2`, `Gi0/1`) at **metric 2** on `LAB-R3`'s next update (~0–30 s). |
-| **T2** Library–Lab Ethernet down | `LIB-R1` | `192.168.30.0/24` | From `LIB-R1` **console**: `interface GigabitEthernet0/1` $\rightarrow$ `shutdown` | `LIB-R1` switches `192.168.30.0/24` to `TCH-R2` (`10.0.12.2`, `Se0/0/0`) at **metric 2** (~0–30 s). Because `AUTO-PC`'s SSH session to `LIB-R1` uses `Gi0/1`, SSH drops until RIP converges via `TCH-R2`; the capture is recovered from `LIB-R1`'s 64 KB log buffer. |
-| **T3** Teachers–Lab serial down | `TCH-R2` | `192.168.30.0/24` | From `TCH-R2` **console**: `interface Serial0/0/1` $\rightarrow$ `shutdown` | `TCH-R2` switches `192.168.30.0/24` to `LIB-R1` (`10.0.12.1`, `Se0/0/0`) at **metric 2** (~0–30 s). Like `T2`, `AUTO-PC` reaches `TCH-R2` over `Se0/0/1`, so the monitor logs the SSH gap and reconnects once the path via `LIB-R1` is up. |
-| **T4** Link recovery | `LIB-R1` | `192.168.20.0/24` | With `T1` link down and converged, on `LIB-R1`: `interface Serial0/0/0` $\rightarrow$ `no shutdown` | Once `Serial0/0/0` comes up and `TCH-R2` exchanges updates over it, `LIB-R1` replaces the metric-2 route with the direct **metric 1** route via `10.0.12.2`. |
-| **T5** Silent RIP update failure | `LIB-R1` | `192.168.30.0/24` | Push [`configs/push/t5-start.txt`](../configs/push/t5-start.txt) (`passive-interface Gi0/1`) to `LAB-R3` with `--no-save` | `Gi0/1` stays physically `up/up`, so `LIB-R1` keeps the stale metric-1 route until the **180 s invalid timer** marks it `possibly down` (metric 16), and replaces it with `TCH-R2`'s **metric 2** path (`10.0.12.2`) after the **240 s flush timer** removes the stale entry (~240–270 s total). Leaves asymmetric routing (`LIB-R1` $\rightarrow$ `TCH-R2` $\rightarrow$ `LAB-R3`, while `LAB-R3` $\rightarrow$ `LIB-R1` stays direct). |
+| **T0** Baseline | all | all | All links up; `run_experiment.py T0` | Every remote LAN at metric 1; the far WAN link with two equal-cost paths |
+| **T1** Library–Teachers link down | `LIB-R1` | `192.168.20.0/24` | `LIB-R1` console: `interface GigabitEthernet0/1` → `shutdown`; then `t1-far-down.txt` pushed to `TCH-R2` (`G0/0.12`) | Metric 2 via `LAB-R3` (`10.0.13.2`, `G0/0.13`) on `LAB-R3`'s next update (0–30 s) |
+| **T2** Library–Lab link down | `LAB-R3` | `192.168.10.0/24` | `t2-measured-down.txt` pushed to `LAB-R3` (`G0/1`); then `LIB-R1` console: `interface GigabitEthernet0/0.13` → `shutdown` | Metric 2 via `TCH-R2` (`10.0.23.1`, `G0/0.23`) on `TCH-R2`'s next update |
+| **T3** Teachers–Lab link down | `TCH-R2` | `192.168.30.0/24` | `TCH-R2` console: `interface GigabitEthernet0/1` → `shutdown`; then `t3-far-down.txt` pushed to `LAB-R3` (`G0/0.23`) | Metric 2 via `LIB-R1` (`10.0.12.1`, `G0/0.12`); the laptop's SSH path to `TCH-R2` uses this link, so the monitor's session drops and reconnects |
+| **T4** Recovery | `LIB-R1` | `192.168.20.0/24` | After `T1`: `t1-far-up.txt` pushed to `TCH-R2` first, then `LIB-R1` console: `no shutdown` on `G0/1` | Back to metric 1 via `10.0.12.2` on `TCH-R2`'s next update |
+| **T5** Silent failure | `LIB-R1` | `192.168.30.0/24` | [`t5-start.txt`](../configs/push/t5-start.txt) (`passive-interface GigabitEthernet0/1`) pushed to `LAB-R3` with `--no-save` | Possibly down at 180 s, flushed at 240 s, then metric 2 via `TCH-R2` (`10.0.12.2`) on its next update (240–270 s); asymmetric routing afterwards |
 
 ---
 
 ## 6a.4 Experimental Results
 
-### Table 6a.1 — Actual Lab Measurements (Template to Fill After Lab Session)
-
-*Run `python scripts/collect_results.py` after completing the lab runs to populate this table from `data/results.csv`:*
+### Table 6a.1 — Convergence time (router debug log)
 
 | Test | Run 1 (s) | Run 2 (s) | Run 3 (s) | Average (s) | Min–Max (s) | Pings lost (avg) |
 |---|---:|---:|---:|---:|---:|---:|
-| **T1** (Library–Teachers serial down) | `[LAB_VALUE: T1-run1]` | `[LAB_VALUE: T1-run2]` | `[LAB_VALUE: T1-run3]` | `[LAB_VALUE: T1-avg]` | `[LAB_VALUE: T1-minmax]` | `[LAB_VALUE: T1-pings]` |
-| **T2** (Library–Lab Ethernet down) | `[LAB_VALUE: T2-run1]` | `[LAB_VALUE: T2-run2]` | `[LAB_VALUE: T2-run3]` | `[LAB_VALUE: T2-avg]` | `[LAB_VALUE: T2-minmax]` | `[LAB_VALUE: T2-pings]` |
-| **T3** (Teachers–Lab serial down) | `[LAB_VALUE: T3-run1]` | `[LAB_VALUE: T3-run2]` | `[LAB_VALUE: T3-run3]` | `[LAB_VALUE: T3-avg]` | `[LAB_VALUE: T3-minmax]` | `[LAB_VALUE: T3-pings]` |
-| **T4** (Recovery — T1 link back up) | `[LAB_VALUE: T4-run1]` | `[LAB_VALUE: T4-run2]` | `[LAB_VALUE: T4-run3]` | `[LAB_VALUE: T4-avg]` | `[LAB_VALUE: T4-minmax]` | `[LAB_VALUE: T4-pings]` |
-| **T5** (Silent failure — passive Gi0/1) | `[LAB_VALUE: T5-run1]` | `[LAB_VALUE: T5-run2]` | `[LAB_VALUE: T5-run3]` | `[LAB_VALUE: T5-avg]` | `[LAB_VALUE: T5-minmax]` | `[LAB_VALUE: T5-pings]` |
+| **T1** Library–Teachers link down | 7.10 | 5.64 | 4.65 | 8.56 (4 runs; run 4: 16.85) | 4.65–16.85 | 32.0 |
+| **T2** Library–Lab link down | 16.47 | 19.12 | 27.04 | 20.87 | 16.47–27.04 | 29.3 |
+| **T3** Teachers–Lab link down | 9.20 | 16.93 | 11.36 | 12.50 | 9.20–16.93 | 33.3 |
+| **T4** Recovery (T1 link back up) | 17.56 | 20.41 | 27.96 | 21.98 | 17.56–27.96 | 0.0 |
+| **T5** Silent failure | 260.26 | 248.65 | 262.35 | 257.09 | 248.65–262.35 | 24.0 |
 
-### Table 6a.2 — Simulated Reference Output (Offline Verification Only)
+### Table 6a.2 — Every run, all three measurements
 
-> **Important Note:** The values in Table 6a.2 were generated offline by [`scripts/simulate_data.py`](../scripts/simulate_data.py) and [`scripts/sim_router.py`](../scripts/sim_router.py) to verify the parsing, aggregation, and plotting pipeline before accessing the university lab routers. **They are simulated sample values, not physical router measurements, and must be replaced by Table 6a.1 once lab testing is complete.**
+| Run | Debug (s) | Debug start → end (router clock) | Monitor converged (s after mark) | SSH gap (s) | Pings lost |
+|---|---:|---|---:|---:|---:|
+| T1-run1 | 7.104 | 16:25:28.223 → 16:25:35.327 | 5.19 ¹ | – | 42 |
+| T1-run2 | 5.636 | 16:49:57.547 → 16:50:03.183 | 8.20 | – | 22 |
+| T1-run3 | 4.652 | 17:03:59.243 → 17:04:03.895 | 2.84 | – | 32 |
+| T1-run4 | 16.848 | 17:15:14.475 → 17:15:31.323 | 18.24 | – | 32 |
+| T2-run1 | 16.468 | 17:31:25.011 → 17:31:41.479 | 21.27 | – | 19 |
+| T2-run2 | 19.116 | 17:37:58.355 → 17:38:17.471 | 23.11 | – | 34 |
+| T2-run3 | 27.036 | 17:43:46.803 → 17:44:13.839 | 31.31 | – | 35 |
+| T3-run1 | 9.204 | 18:07:48.051 → 18:07:57.255 | 24.57 | 13.7 | 32 |
+| T3-run2 | 16.928 | 18:17:55.135 → 18:18:12.063 | 31.40 | 7.7 | 45 |
+| T3-run3 | 11.364 | 18:25:56.691 → 18:26:08.055 | 24.20 | 0.7 | 23 |
+| T4-run1 | 17.560 | 16:58:01.743 → 16:58:19.303 | 18.23 | – | 0 |
+| T4-run2 | 20.412 | 17:09:42.911 → 17:10:03.323 | 25.11 | – | 0 |
+| T4-run3 | 27.956 | 17:24:09.543 → 17:24:37.499 | 29.36 | – | 0 |
+| T5-run1 | 260.260 | 18:31:10.779 → 18:35:31.039 | 245.64 | – | 22 |
+| T5-run2 | 248.648 | 18:54:28.303 → 18:58:36.951 | 247.98 | 9.2 | 12 |
+| T5-run3 | 262.348 | 19:04:57.719 → 19:09:20.067 | 238.58 | – | 38 |
 
-| Test | Run 1 (s) | Run 2 (s) | Run 3 (s) | Average (s) | Min–Max (s) | Pings lost (avg) |
-|---|---:|---:|---:|---:|---:|---:|
-| **T1** (Library–Teachers serial down) | 7.42 | 18.16 | 11.69 | 12.42 | 7.42–18.16 | 13.0 |
-| **T2** (Library–Lab Ethernet down) | 14.21 | 6.86 | 22.41 | 14.49 | 6.86–22.41 | 15.0 |
-| **T3** (Teachers–Lab serial down) | 9.61 | 21.11 | 13.76 | 14.82 | 9.61–21.11 | 15.3 |
-| **T4** (Recovery — T1 link back up) | 4.30 | 12.90 | 8.15 | 8.46 | 4.30–12.90 | 0.0 |
-| **T5** (Silent failure — passive Gi0/1) | 252.41 | 263.81 | 246.91 | 254.37 | 246.91–263.81 | 14.3 |
+¹ From the runner's printed output; the monitor log files of T1-run1 were lost (6a.6).
 
----
+### Table 6a.3 — T5: each step against RIP's timers (seconds after the last update from LAB-R3)
 
-## 6a.5 Generated Charts and Figure Captions
+| Run | Possibly down (invalid, 180 s) | Flushed (240 s) | New route installed |
+|---|---:|---:|---:|
+| T5-run1 | 188.7 | 248.8 | 260.3 |
+| T5-run2 | 182.0 | 242.1 | 248.6 |
+| T5-run3 | 183.0 | 243.0 | 262.3 |
 
-[`scripts/visualize.py`](../scripts/visualize.py) generates four charts from the collected CSV logs. When run against the offline sample dataset (`python scripts/visualize.py --simulated`), each chart is stamped with a red **`SIMULATED SAMPLE DATA — NOT FROM PHYSICAL ROUTERS`** banner and watermark; running `python scripts/visualize.py` after the lab session produces the clean report figures in `data/charts/`.
-
-1. **Figure 6a.1 — Convergence Time Comparison (`convergence_comparison.png` / `SIMULATED_convergence_comparison.png`):**  
-   *Caption:* **Figure 6a.1:** Mean RIPv2 convergence time across three runs per experiment (`T1`–`T5`), with vertical error bars indicating the minimum and maximum run durations and white markers showing individual runs. The left panel compares all five experiments against the 180 s RIP invalid timer and 240 s flush timer, while the right panel zooms into the direct interface-change tests (`T1`–`T4`) relative to the 30 s periodic RIP update interval.
-
-2. **Figure 6a.2 — T1 Route-Change Timeline (`timeline_T1-run1_LIB-R1.png` / `SIMULATED_timeline_T1-run1_LIB-R1.png`):**  
-   *Caption:* **Figure 6a.2:** Route-state step timeline on `LIB-R1` for destination `192.168.20.0/24` during `T1` (`Serial0/0/0` shutdown). The top panel shows the route dropping from Metric 1 (`via 10.0.12.2`) to Missing immediately after the link goes down, then recovering at Metric 2 (`via 10.0.13.2` on `Gi0/1`) when `LAB-R3`'s next periodic update arrives. The bottom panel shows the actual SSH command duration and polling interval for each `show ip route rip` query.
-
-3. **Figure 6a.3 — T2 Route-Change Timeline with SSH Reconnection (`timeline_T2-run1_LIB-R1.png` / `SIMULATED_timeline_T2-run1_LIB-R1.png`):**  
-   *Caption:* **Figure 6a.3:** Route-state timeline on `LIB-R1` for `192.168.30.0/24` during `T2` (`GigabitEthernet0/1` shutdown from console). The shaded red region marks the window in which the monitoring laptop's SSH session to `LIB-R1` was severed by the link failure before automatically reconnecting over the newly converged 2-hop path through `TCH-R2` (`via 10.0.12.2`, Metric 2).
-
-4. **Figure 6a.4 — T5 Silent-Failure Timeline (`timeline_T5-run1_LIB-R1.png` / `SIMULATED_timeline_T5-run1_LIB-R1.png`):**  
-   *Caption:* **Figure 6a.4:** Route-state timeline on `LIB-R1` for `192.168.30.0/24` during `T5` (`passive-interface Gi0/1` on `LAB-R3`). Because `Gi0/1` remains physically up, the direct Metric 1 route (`via 10.0.13.2`) persists for 180 s after the last update, transitions to Metric 16 hold-down (`is possibly down`) between 180 s and 240 s, is flushed at 240 s, and finally converges to Metric 2 (`via 10.0.12.2`) on `TCH-R2`'s next periodic advertisement.
-
----
-
-## 6a.6 Evidence Collection Procedure
-
-For each run of `T1`–`T5` (and the single baseline run `T0`), the scripts record and archive five pieces of verifiable evidence in the repository:
-
-1. **Before/after routing-table snapshots (`data/snapshots/<timestamp>_<label>-before.json` and `-after.json` plus `data/routes.csv`):** Captured across all three routers by [`scripts/get_routes.py`](../scripts/get_routes.py) and diffed per network by [`scripts/compare_routes.py`](../scripts/compare_routes.py).
-2. **Router buffered debug logs (`data/debug_logs/<test>-run<n>_<router>.txt` and `.meta.json`):** Saved from the router's 64 KB debugging buffer by [`scripts/capture_rip_debug.py`](../scripts/capture_rip_debug.py), together with pre/post `show clock` readings.
-3. **Parsed debug event tables (`data/debug_logs/<test>-run<n>_<router>.csv`):** Generated by [`scripts/parse_rip_debug.py`](../scripts/parse_rip_debug.py), listing every sent/received RIP update, `%LINK`/`%LINEPROTO` transition, and `RT: add` / `RT: delete` event with millisecond timestamps.
-4. **Polling event and timing logs (`data/monitor_logs/<test>-run<n>_<router>.csv`, `_polls.csv`, and `_summary.json`):** Recorded by [`scripts/monitor_convergence.py`](../scripts/monitor_convergence.py).
-5. **Aggregated summary table (`data/results.csv`):** Built automatically by [`scripts/collect_results.py`](../scripts/collect_results.py).
+Each step lands a few seconds after its timer (IOS checks its timers periodically, not continuously), and the new route arrives with `TCH-R2`'s next periodic update after the flush.
 
 ---
 
-## 6a.7 Measurement Limitations and Practical Considerations
+## 6a.5 Charts and Figure Captions
 
-1. **Observation time vs. actual network event time in polling:**  
-   `monitor_convergence.py` records the laptop clock (`obs_time`) when an SSH reply finishes returning. A change observed at poll $k$ actually occurred somewhere inside the interval $[t_{\text{sent}}(k-1),\, t_{\text{obs}}(k)]$, which is reported as `window_s` in the CSV. Moreover, executing `show ip route rip` over a 64 kbps serial link takes approximately 0.3–1.2 s per command, so real polling intervals can exceed the nominal 1.0 s target. For sub-second accuracy, the router-internal debug log (`parse_rip_debug.py`) is used as the primary convergence figure, and polling serves as an independent cross-check.
-2. **In-band SSH disconnection during `T2` and `T3`:**  
-   Because `AUTO-PC` sits on the Laboratory LAN (`192.168.30.20`), its normal SSH path to `LIB-R1` traverses `Gi0/1` (`T2`), and its normal SSH path to `TCH-R2` traverses `Se0/0/1` (`T3`). Shutting either interface cuts the live SSH connection until RIP converges around the triangle. Live `monitor_convergence.py` polling is therefore blind during the outage window (logging `session_lost` and `session_restored`), whereas the router's internal 64 KB log buffer (`logging buffered 64000 debugging`) continues recording every `debug ip rip` and `debug ip routing` line uninterrupted and is read back after reconnection.
-3. **Unsynchronised clocks across devices:**  
-   Lab routers without NTP often boot with clocks starting in 1993 or with several seconds of offset from the laptop. Measuring $t_{\text{end}} - t_{\text{start}}$ strictly from a single router's buffered log eliminates cross-device clock skew, while `capture_rip_debug.py` also records `show clock` before and after each capture to document the offset relative to laptop time.
-4. **Cisco IOS hold-down vs. flush timer behaviour in `T5`:**  
-   Standard RIP theory states that the 180 s hold-down timer (starting when the 180 s invalid timer expires) ignores worse-metric updates until 360 s, unless the 240 s flush timer deletes the route first. On Cisco IOS 15, the flush timer (240 s) removes the `possibly down` entry 60 s into hold-down, allowing the next periodic update from `TCH-R2` to install the metric-2 route at ~240–270 s. Some IOS releases or emulator images may also clear or replace a route slightly earlier depending on split-horizon/poison-reverse interactions; our scripts record both the `possibly_down` transition and the actual `RT: add` installation time so the report reflects the exact behaviour of the lab routers.
+[`scripts/visualize.py`](../scripts/visualize.py) draws the charts in `data/charts/` from the collected logs.
+
+1. **Figure 6a.1 — `convergence_comparison.png`:** Mean RIPv2 convergence time per test with min–max error bars and each run as a point. The left panel compares all five tests against the 180 s invalid and 240 s flush timers; the right panel zooms into the link tests (`T1`–`T4`) against the 30 s update interval.
+2. **Figure 6a.2 — `timeline_T5-run1_LIB-R1.png`:** `192.168.30.0/24` on `LIB-R1` during `T5`: metric 1 via `10.0.13.2`, metric 16 (possibly down) at about 205 s of observation, metric 2 via `10.0.12.2` at about 287 s. The brief flushed state was not seen by the monitor: during those seconds `LIB-R1` had no route back to the laptop, so the poll stalled (the spike in the lower panel).
+3. **Figure 6a.3 — `timeline_T3-run1_TCH-R2.png`:** `192.168.30.0/24` on `TCH-R2` during `T3`: metric 1 via `10.0.23.2`, then the shaded 13.7 s SSH session gap (the laptop's path to `TCH-R2` used the cut link), then metric 2 via `10.0.12.1`.
+4. **Figures 6a.4–6a.5 — `timeline_T2-run1_LAB-R3.png`, `timeline_T4-run1_LIB-R1.png`:** the same view for `T2` (measured on `LAB-R3`, no session gap) and `T4` (recovery to metric 1). There is no `T1` timeline: the chart uses run 1, whose monitor files were lost.
+
+---
+
+## 6a.6 Evidence
+
+For every run the repository holds:
+
+1. **Before/after routing snapshots:** `data/snapshots/<timestamp>_<label>-before.json` / `-after.json` and `data/routes.csv` ([`get_routes.py`](../scripts/get_routes.py)), diffed by [`compare_routes.py`](../scripts/compare_routes.py).
+2. **Debug captures:** `data/debug_logs/<test>-run<n>_<router>.txt`, with the parsed events in `.csv` and metadata in `.meta.json`.
+3. **Monitor logs:** `data/monitor_logs/<test>-run<n>_<router>.csv`, `_polls.csv`, `_summary.json`.
+4. **Ping and traceroute photos:** `data/ping_logs/photos/<test>-run<n>_before.jpg` / `_after.jpg`.
+5. **Results table:** `data/results.csv` ([`collect_results.py`](../scripts/collect_results.py)).
+
+**Recovered data.** The laptop's `data/debug_logs/` folder was deleted during the session, after `T1`–`T4` had finished. The raw debug lines for all `T1`, `T3` and `T4` runs were recovered from the PuTTY console logs (`data/console_logs/`), because the console on the measured router printed the same debug output; all 10 recovered runs recompute to the figures the runner printed at the time. `T2`'s figures come from the runner's printed output (`data/debug_logs/runner_debug_lines_T1-T4.txt`), because the console was not on `LAB-R3`. `T5` run 1 keeps its four key debug lines. Each recovered file states its source in its header.
+
+---
+
+## 6a.7 Observations and Measurement Limitations
+
+1. **The spread follows the 30 s update timer.** In `T1`–`T3` the router deletes the route at once, then waits for the neighbour's next periodic update, which comes 0–30 s later. That is why `T1` ranges from 4.65 to 16.85 s. With 3–4 runs per test, the differences between the `T1`, `T2` and `T3` averages are within this 0–30 s spread, so they say more about where each cut fell in the neighbour's update cycle than about the links themselves.
+2. **Recovery is not faster than failure.** In `T4`, `LIB-R1` sent a RIP request as soon as the link came up (`T4` run 1, 16:58:06), but the better route only arrived with `TCH-R2`'s next periodic update: 17.6–28.0 s in total, with no lost pings because the 2-hop route kept working meanwhile.
+3. **Ping loss measures the slower router.** A ping needs both directions; the return path depends on the far router, which only dropped its route when its end was shut a few seconds after "go", then waited for its own neighbour's update. Ping loss (22–45 lost replies) is therefore longer than the measured router's convergence. The counts may include a packet twice where ping printed both `Unreachable` and `no answer yet` for it, so treat them as approximate.
+4. **One-sided failures on switched links.** A port going down on one router is invisible to the router at the other end of a VLAN link through a switch, which then has to wait for RIP's invalid timer, as in `T5`. Shutting both ends emulates a cut cable. In real networks this is the case for BFD or a faster protocol.
+5. **SSH gaps.** In `T3` the monitor's SSH path to `TCH-R2` ran over the cut link (gaps of 0.7–13.7 s); the debug capture was unaffected because it was read from the router's log buffer afterwards. In `T5` run 2, `LIB-R1` briefly had no route back to the laptop between the flush and the new route (9.2 s gap).
+6. **Asymmetric routing after `T5`.** The traceroute from the Library PC went through `TCH-R2` (`10.0.12.2`, `10.0.23.2`) while the replies kept `ttl=254`: `LAB-R3` still heard `LIB-R1` and kept sending its replies over the direct link.
+7. **Unsynchronised clocks.** The router clocks were set to the laptop's time before testing (to within 1 s), but every convergence figure uses a single router's clock, so clock offsets do not affect it.

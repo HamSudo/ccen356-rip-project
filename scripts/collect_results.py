@@ -295,7 +295,18 @@ def main(argv=None):
     parser.add_argument("--source", default="", help="'measured' or 'simulated'")
     args = parser.parse_args(argv)
 
-    rows = collect(args.debug_dir, args.monitor_dir, pings=_parse_pings(args.ping), source=args.source)
+    # Ping counts are typed in by hand (--ping), not read from any log, so keep
+    # the ones already in the output file: re-running without --ping must not
+    # wipe them. Counts given on the command line win.
+    pings = {}
+    if args.out.is_file():
+        with args.out.open(encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                if r.get("pings_lost") not in (None, ""):
+                    pings[f"{r['test']}-run{r['run']}"] = r["pings_lost"]
+    pings.update(_parse_pings(args.ping))
+
+    rows = collect(args.debug_dir, args.monitor_dir, pings=pings, source=args.source)
     write_results_csv(rows, args.out)
     print(f"Wrote {args.out}\n")
     print(format_markdown_table(rows))

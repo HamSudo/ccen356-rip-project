@@ -18,7 +18,8 @@ How it records (the plan's "Handoff from Mouhamed" suggests the buffer):
   buffer  'clear logging', debugs on, wait, then read 'show logging' back.
           The router keeps the debug lines in its 64 KB log buffer
           (configs/push/timestamps.txt), so nothing is lost if the SSH
-          session drops in the middle (T2, T3).
+          session drops in the middle (T3: the laptop's path to TCH-R2
+          runs over the link being cut).
   live    'terminal monitor' and read the lines as they arrive. Lost while
           the session is down.
   both    (default) does both: the buffer copy is the main capture, the live
