@@ -32,7 +32,7 @@ Each figure earns its place by showing something no other figure shows.
 | 6a Results | Results table | `data/results.csv` | The main result, as a table |
 | 6a Results | Convergence comparison chart | `data/charts/convergence_comparison.png` | Average and min–max per test |
 | 6a Results | T1 run 1 traceroute, before and after | `data/ping_logs/photos/T1-run1_before.jpg`, `T1-run1_after.jpg` | Shows the reroute (10.0.12.2 → 10.0.13.2, 10.0.23.1) |
-| 6a / 6b | T5 timeline chart | `data/charts/timeline_T5-run1_LIB-R1.png` | Shows the 180 s invalid and 240 s flush timers |
+| 6a / 6b | T5 timeline chart | `data/charts/timeline_T5-run1_LIB-R1.png` | Shows the stale route kept for minutes, then possibly down, then the backup path |
 | 6b Analysis | T5 run 1 after photo | `data/ping_logs/photos/T5-run1_after.jpg` | Detour traceroute but `ttl=254`: asymmetric routing in one image |
 
 Not in the list on purpose: photos for runs 2–4, screenshots of the other routers and switches, and anything that repeats a figure above.

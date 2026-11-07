@@ -3,22 +3,24 @@ visualize.py - generate convergence comparison and route-change timeline charts.
 
 Reads data/results.csv (or builds it from data/debug_logs/ + data/monitor_logs/)
 and plots:
-  1. convergence_comparison.png    average convergence per test (T1..T5) with
-                                   min-max error bars and individual run dots
-  2. timeline_<test>_<router>.png  step timeline of route metric, next hop and
-                                   status (up / possibly_down / missing) from a
+  1. convergence_comparison.png    every run of every test as a dot, with the
+                                   mean marked, against RIP's timer values
+  2. timeline_<test>_<router>.png  the watched route's state over time (direct,
+                                   backup, possibly down, gone) from a
                                    monitor_convergence.py log
 
     python scripts/visualize.py
     python scripts/visualize.py --results data/results.csv --timeline data/monitor_logs/T1-run1_LIB-R1.csv
 
-T5 (~240-270 s) is an order of magnitude longer than T1..T4 (~1-30 s), so the
-comparison figure shows a two-panel layout: all tests T1..T5 on the left, and a
-zoomed T1..T4 panel on the right so the fast tests remain easy to read.
+T5 (~240-270 s) is an order of magnitude longer than T1..T4 (~5-30 s), so the
+comparison figure puts the link tests and the silent failure in two panels,
+each on its own scale, with the timer that explains each one drawn on it.
+Only 3-4 runs exist per test, so the runs are shown as dots rather than hidden
+inside a bar.
 
-Whenever any input row is marked 'simulated', the chart
-title, subtitle, watermark and file name clearly mark it as SIMULATED SAMPLE
-DATA so it can never be mistaken for real lab measurements.
+Whenever any input row is marked 'simulated', the chart title, watermark and
+file name clearly mark it as SIMULATED SAMPLE DATA so it can never be mistaken
+for real lab measurements.
 """
 
 import argparse
@@ -30,6 +32,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")  # headless-safe for tests and SSH terminals
 import matplotlib.pyplot as plt
+from matplotlib.transforms import blended_transform_factory
 
 from collect_results import collect, load_results_csv, summarize_by_test, write_results_csv
 from experiments import EXPERIMENTS, FAILURE_TESTS
@@ -38,6 +41,19 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CHARTS_DIR = DATA_DIR / "charts"
 
 SIM_WATERMARK = "SIMULATED SAMPLE DATA — NOT FROM PHYSICAL ROUTERS"
+
+# One palette for every chart. Ink colours carry text and reference lines;
+# a single blue carries the data, so colour never competes with the labels.
+INK = "#0b0b0b"
+INK_2 = "#52514e"
+MUTED = "#898781"
+GRID = "#e1e0d9"
+AXIS = "#c3c2b7"
+SERIES = "#2a78d6"
+BAND = "#cde2fb"   # light step of the same blue, for "expected range" shading
+GAP = "#ecebe6"    # shading for times the monitor could not see the router
+
+LINK_TESTS = ["T1", "T2", "T3", "T4"]
 
 
 def _float(val):
@@ -61,123 +77,124 @@ def is_simulated_rows(rows, force=False):
 
 def _stamp_simulated(fig):
     """Add an unmistakable banner and diagonal watermark to a simulated chart."""
-    fig.text(
-        0.5, 0.985, SIM_WATERMARK,
-        ha="center", va="top", fontsize=10, fontweight="bold", color="#8b0000",
-        bbox={"boxstyle": "round,pad=0.3", "facecolor": "#ffe8e8", "edgecolor": "#cc0000", " lw": 1}
-        if False else {"boxstyle": "round,pad=0.3", "facecolor": "#ffe8e8", "edgecolor": "#cc0000"},
-    )
-    fig.text(
-        0.5, 0.5, "SIMULATED SAMPLE",
-        ha="center", va="center", fontsize=34, fontweight="bold",
-        color="#cc0000", alpha=0.10, rotation=22,
-    )
+    fig.text(0.5, 0.995, SIM_WATERMARK, ha="center", va="top", fontsize=10,
+             fontweight="bold", color="#8b0000",
+             bbox={"boxstyle": "round,pad=0.3", "facecolor": "#ffe8e8", "edgecolor": "#cc0000"})
+    fig.text(0.5, 0.5, "SIMULATED SAMPLE", ha="center", va="center", fontsize=34,
+             fontweight="bold", color="#cc0000", alpha=0.10, rotation=22)
+
+
+def _style_axes(ax):
+    """Recessive frame: hairline grid on y only, no top/right spines, muted ticks."""
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(AXIS)
+    ax.tick_params(colors=MUTED, labelcolor=INK_2, labelsize=9, length=3)
+    ax.grid(axis="y", color=GRID, linewidth=0.8)
+    ax.set_axisbelow(True)
+
+
+def _titles(fig, title, subtitle, sim):
+    """Left-aligned title and one-line subtitle, the way a report figure reads."""
+    top = 0.95 if sim else 0.98
+    fig.text(0.012, top, title + (" [SIMULATED SAMPLE DATA]" if sim else ""),
+             ha="left", va="top", fontsize=13, fontweight="bold", color=INK)
+    fig.text(0.012, top - 0.075, subtitle, ha="left", va="top", fontsize=9.5, color=INK_2)
+
+
+def _short_title(test):
+    return {
+        "T1": "Library–Teachers\nlink down",
+        "T2": "Library–Lab\nlink down",
+        "T3": "Teachers–Lab\nlink down",
+        "T4": "Library–Teachers\nlink restored",
+        "T5": "LAB-R3 stops\nsending updates",
+    }.get(test, test)
+
+
+def _draw_runs(ax, tests, summary):
+    """Dots for each run, a short black line for the mean, the mean as text beside it."""
+    for idx, t in enumerate(tests):
+        s = summary.get(t) or {"runs": {}, "values": [], "avg": None}
+        runs = [v for _, v in sorted(s["runs"].items())]
+        n = len(runs)
+        for k, val in enumerate(runs):
+            # Spread the dots sideways so equal values never hide each other
+            dx = (k - (n - 1) / 2) * 0.09
+            ax.scatter(idx + dx, val, s=52, color=SERIES, edgecolor="white", linewidth=1.4, zorder=3)
+        if s["avg"] is not None:
+            ax.hlines(s["avg"], idx - 0.24, idx + 0.24, color=INK, linewidth=2.2, zorder=4)
+            ax.text(idx + 0.28, s["avg"], f"{s['avg']:.1f} s", ha="left", va="center",
+                    fontsize=9.5, fontweight="bold", color=INK, zorder=5)
+        else:
+            ax.text(idx, 0, "no data", ha="center", va="bottom", fontsize=8.5,
+                    style="italic", color=MUTED)
+    ax.set_xticks(range(len(tests)))
+    ax.set_xticklabels([f"{t}\n{_short_title(t)}\n"
+                        f"n = {len((summary.get(t) or {}).get('values', []))}" for t in tests],
+                       fontsize=8.5)
+    ax.set_xlim(-0.6, len(tests) - 0.25)
+
+
+def _ref_line(ax, y, text, above=True):
+    """Horizontal reference line with its label written on it (no legend needed)."""
+    ax.axhline(y, color=MUTED, linewidth=1.0, linestyle=(0, (4, 3)), zorder=1)
+    trans = blended_transform_factory(ax.transAxes, ax.transData)
+    ax.text(0.01, y, text, transform=trans, ha="left", va="bottom" if above else "top",
+            fontsize=8.5, color=INK_2,
+            bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0})
 
 
 def plot_convergence_comparison(rows, out_path, simulated=False, method_field="debug_convergence_s"):
-    """Plot average convergence per test with min-max error bars and individual runs.
+    """Plot every run of T1..T5 with its mean, against the RIP timers that bound it.
 
     Returns the saved Path. Handles missing tests or partial runs gracefully.
     """
     sim = is_simulated_rows(rows, force=simulated)
     summary = summarize_by_test(rows, field=method_field)
 
-    fig, (ax_all, ax_fast) = plt.subplots(
-        1, 2, figsize=(13, 5.6), gridspec_kw={"width_ratios": [1.25, 1.0]}
-    )
+    fig, (ax_link, ax_silent) = plt.subplots(
+        1, 2, figsize=(11, 5.0), gridspec_kw={"width_ratios": [4, 1.45], "wspace": 0.32})
 
-    colors = {"T1": "#2b5c8f", "T2": "#3884b6", "T3": "#4aa3a2", "T4": "#5aa469", "T5": "#d95f02"}
+    # Left: link failures and recovery, bounded by one 30 s update interval
+    _draw_runs(ax_link, LINK_TESTS, summary)
+    link_max = max([v for t in LINK_TESTS for v in (summary.get(t) or {}).get("values", [])] + [0])
+    ax_link.set_ylim(0, max(36.0, link_max * 1.15))
+    _ref_line(ax_link, 30, "RIP update interval (30 s)")
+    ax_link.set_ylabel("Convergence time (s)", fontsize=9.5, color=INK_2)
+    ax_link.set_title("Link failures and recovery", loc="left", fontsize=10.5,
+                      fontweight="bold", color=INK, pad=10)
 
-    def draw_panel(ax, tests, title):
-        xs = list(range(len(tests)))
-        avgs, low_err, high_err, bar_colors = [], [], [], []
-        for idx, t in enumerate(tests):
-            s = summary[t]
-            if s["avg"] is not None:
-                avgs.append(s["avg"])
-                low_err.append(max(0.0, s["avg"] - s["min"]))
-                high_err.append(max(0.0, s["max"] - s["avg"]))
-                bar_colors.append(colors.get(t, "#4c72b0"))
-            else:
-                avgs.append(0.0)
-                low_err.append(0.0)
-                high_err.append(0.0)
-                bar_colors.append("#cccccc")
+    # Right: silent failure, bounded by the flush timer plus one update
+    _draw_runs(ax_silent, ["T5"], summary)
+    ax_silent.axhspan(240, 270, color=BAND, alpha=0.7, zorder=0, linewidth=0)
+    t5_max = max((summary.get("T5") or {}).get("values", []) + [0])
+    ax_silent.set_ylim(0, max(300.0, t5_max * 1.1))
+    _ref_line(ax_silent, 180, "invalid (180 s)")
+    _ref_line(ax_silent, 240, "flush (240 s)", above=False)
+    ax_silent.text(0.01, 271, "expected:\nflush + next update", ha="left", va="bottom",
+                   transform=blended_transform_factory(ax_silent.transAxes, ax_silent.transData),
+                   fontsize=8, color=INK_2)
+    ax_silent.set_ylabel("Convergence time (s)", fontsize=9.5, color=INK_2)
+    ax_silent.set_title("Silent failure", loc="left", fontsize=10.5,
+                        fontweight="bold", color=INK, pad=10)
 
-        bars = ax.bar(
-            xs, avgs, width=0.58, color=bar_colors, edgecolor="#1f2937", linewidth=0.9,
-            yerr=[low_err, high_err], capsize=5,
-            error_kw={"elinewidth": 1.4, "ecolor": "#111827", "capthick": 1.4},
-            label="Mean convergence time (min–max error bar)",
-        )
+    for ax in (ax_link, ax_silent):
+        _style_axes(ax)
 
-        # Plot individual runs as scatter dots
-        for idx, t in enumerate(tests):
-            s = summary[t]
-            run_items = sorted(s["runs"].items())
-            for k, (run_no, val) in enumerate(run_items):
-                jitter = (k - (len(run_items) - 1) / 2) * 0.11
-                ax.scatter(
-                    idx + jitter, val, color="#111827", facecolor="#ffffff",
-                    edgecolor="#111827", s=38, zorder=4, linewidth=1.2,
-                    label="Individual run (n=1..3)" if (idx == 0 and k == 0) else None,
-                )
-            if s["avg"] is not None:
-                top = s["max"] if s["max"] is not None else s["avg"]
-                ax.text(
-                    idx, top + max(top * 0.04, 0.4),
-                    f"{s['avg']:.1f}s\n(n={len(s['values'])})",
-                    ha="center", va="bottom", fontsize=8.5, fontweight="bold", color="#111827",
-                )
-            else:
-                ax.text(idx, 0.5, "no data", ha="center", va="bottom", fontsize=8.5,
-                        style="italic", color="#6b7280")
-
-        ax.set_xticks(xs)
-        ax.set_xticklabels([f"{t}\n{_short_title(t)}" for t in tests], fontsize=8.5)
-        ax.set_ylabel("Convergence time (seconds)", fontsize=10)
-        ax.set_title(title, fontsize=10.5, fontweight="bold", pad=8)
-        ax.grid(axis="y", linestyle="--", alpha=0.45)
-        ax.set_axisbelow(True)
-        ymax = max([summary[t]["max"] or 0.0 for t in tests] + [5.0])
-        ax.set_ylim(0, ymax * 1.38)
-        return bars
-
-    draw_panel(ax_all, list(FAILURE_TESTS), "All Link-Failure Tests (T1–T5)")
-    draw_panel(ax_fast, ["T1", "T2", "T3", "T4"], "Zoomed View: Direct Interface Changes (T1–T4)")
-
-    # Reference timer lines on the full panel
-    t5_max = summary["T5"]["max"] or 0
-    if t5_max > 150:
-        ax_all.axhline(180, color="#b91c1c", linestyle=":", linewidth=1.0, label="RIP invalid timer (180 s)")
-        ax_all.axhline(240, color="#7c2d12", linestyle="--", linewidth=1.0, label="RIP flush timer (240 s)")
-    ax_fast.axhline(30, color="#4b5563", linestyle=":", linewidth=1.0, label="RIP periodic update (30 s)")
-
-    ax_all.legend(loc="upper left", fontsize=8, framealpha=0.9)
-    ax_fast.legend(loc="upper right", fontsize=8, framealpha=0.9)
-
-    tag = " [SIMULATED SAMPLE DATA]" if sim else ""
-    fig.suptitle(f"RIPv2 Convergence Time by Test Scenario (Mean ± Min/Max Across Runs){tag}",
-                 fontsize=12, fontweight="bold", y=0.94 if sim else 0.97)
+    _titles(fig, "RIPv2 convergence time per test",
+            "Each dot is one run; the black line is the mean. The two panels use different "
+            "scales. Measured from each router's debug log.", sim)
     if sim:
         _stamp_simulated(fig)
 
-    fig.tight_layout(rect=(0, 0, 1, 0.90 if sim else 0.93))
+    fig.subplots_adjust(left=0.06, right=0.985, top=0.75 if sim else 0.78, bottom=0.19)
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=180)
+    fig.savefig(out_path, dpi=200, facecolor="white")
     plt.close(fig)
     return out_path
-
-
-def _short_title(test):
-    return {
-        "T1": "LIB–TCH\nlink down",
-        "T2": "LIB–LAB\nlink down",
-        "T3": "TCH–LAB\nlink down",
-        "T4": "T1 link\nrecovery",
-        "T5": "Silent peer\n(passive Gi0/1)",
-    }.get(test, test)
 
 
 def load_monitor_csv(path):
@@ -292,8 +309,73 @@ def build_route_series(rows, network, polls=None):
     return points
 
 
-def plot_route_timeline(event_csv_path, out_path=None, network=None, simulated=False):
-    """Plot a route-change timeline (metric + state + key events) from one monitor CSV."""
+# Route states on the timeline, best at the top: a drop on the chart is the
+# route getting worse, a rise is it recovering.
+STATE_ROWS = [
+    (0, "Not in table"),
+    (1, "Possibly down\n(metric 16)"),
+    (2, "Backup path\n(metric 2)"),
+    (3, "Direct path\n(metric 1)"),
+]
+
+
+def _state_y(metric, status):
+    if status == "missing" or metric in (None, 0):
+        return 0
+    if status == "possibly_down" or metric >= 16:
+        return 1
+    return 3 if metric <= 1 else 2
+
+
+def _monitor_gaps(rows, polls, min_gap=2.5):
+    """Spans where the monitor could not see the router (slow polls, SSH reconnects), merged."""
+    spans = []
+    for p in polls:
+        iv = _float(p.get("interval_s"))
+        if iv is not None and iv > min_gap:
+            spans.append([p["_t"] - iv, p["_t"]])
+    down_t = None
+    for r in rows:
+        if r.get("event") == "session_lost":
+            down_t = r["_t"]
+        elif r.get("event") == "session_restored" and down_t is not None:
+            spans.append([down_t, r["_t"]])
+            down_t = None
+    merged = []
+    for s in sorted(spans):
+        if merged and s[0] <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], s[1])
+        else:
+            merged.append(list(s))
+    return [tuple(s) for s in merged]
+
+
+def _split_by_gaps(t0, t1, gaps):
+    """Cut [t0, t1] into (start, end, inside_gap) pieces."""
+    cuts = sorted({t0, t1, *[g for span in gaps for g in span if t0 < g < t1]})
+    pieces = []
+    for a, b in zip(cuts, cuts[1:]):
+        mid = (a + b) / 2
+        pieces.append((a, b, any(s <= mid <= e for s, e in gaps)))
+    return pieces
+
+
+def _draw_state_line(ax, ts, ys, gaps):
+    """Step line: solid where the monitor saw the router, dotted where it could not."""
+    for i in range(len(ts) - 1):
+        for a, b, hidden in _split_by_gaps(ts[i], ts[i + 1], gaps):
+            ax.plot([a, b], [ys[i], ys[i]], color=SERIES, zorder=3, solid_capstyle="butt",
+                    linewidth=1.6 if hidden else 2.4, linestyle=(0, (1.5, 2)) if hidden else "-")
+        if ys[i + 1] != ys[i]:
+            ax.plot([ts[i + 1]] * 2, [ys[i], ys[i + 1]], color=SERIES, linewidth=2.4, zorder=3)
+
+
+def plot_route_timeline(event_csv_path, out_path=None, network=None, simulated=False, debug_s=None):
+    """Plot the watched route's state over one run, with the change and convergence marked.
+
+    debug_s, if given, is the same run's convergence time from the router's debug
+    log; it is printed next to the monitor's figure so the two can be compared.
+    """
     event_csv_path = Path(event_csv_path)
     rows = load_monitor_csv(event_csv_path)
     polls = load_polls_csv(event_csv_path)
@@ -302,101 +384,96 @@ def plot_route_timeline(event_csv_path, out_path=None, network=None, simulated=F
     label = event_csv_path.stem.replace(f"_{router}", "")
     target = _choose_target_network(rows, network)
     points = build_route_series(rows, target, polls)
+    gaps = _monitor_gaps(rows, polls)
 
-    fig, (ax_metric, ax_poll) = plt.subplots(
-        2, 1, figsize=(11.5, 5.8), sharex=True, gridspec_kw={"height_ratios": [2.4, 1.0]}
-    )
+    fig, ax = plt.subplots(figsize=(11, 4.8))
+    _style_axes(ax)
+    trans = blended_transform_factory(ax.transData, ax.transAxes)
+
+    for start, end in gaps:
+        ax.axvspan(start, end, color=GAP, zorder=0, linewidth=0)
+        ax.text((start + end) / 2, 0.02, f"router not\nvisible {end - start:.0f} s", transform=trans,
+                ha="center", va="bottom", fontsize=7.5, color=MUTED)
 
     if not points:
-        ax_metric.text(0.5, 0.5, f"No valid route events in {event_csv_path.name}",
-                       ha="center", va="center", transform=ax_metric.transAxes, fontsize=11)
+        ax.text(0.5, 0.5, f"No valid route events in {event_csv_path.name}",
+                ha="center", va="center", transform=ax.transAxes, fontsize=11, color=INK_2)
     else:
         ts = [p[0] for p in points]
-        # Map metric to a readable y scale: 0 = missing, 1 = 1 hop, 2 = 2 hops, 3.2 = possibly_down (m16)
-        def y_map(m, st):
-            if st == "missing" or m == 0:
-                return 0.0
-            if st == "possibly_down" or m >= 16:
-                return 3.2
-            return float(min(m, 3))
-
-        ys = [y_map(p[1], p[2]) for p in points]
-        ax_metric.step(ts, ys, where="post", color="#1d4ed8", linewidth=2.2, label=f"{target} state / metric")
-        ax_metric.scatter(ts[:-1] if len(ts) > 1 else ts, ys[:-1] if len(ys) > 1 else ys,
-                          color="#1d4ed8", s=34, zorder=4)
-
-        # Annotate next-hop transitions
-        last_label = None
+        ys = [_state_y(p[1], p[2]) for p in points]
+        _draw_state_line(ax, ts, ys, gaps)
+        # A dot and a next-hop label only where the state actually changes
+        span = (ts[-1] - ts[0]) or 1.0
+        last = None
         for t, m, st, nh, ev in points:
-            if ev == "end":
+            y = _state_y(m, st)
+            key = (y, nh)
+            if ev == "end" or key == last:
                 continue
-            desc = "missing" if st == "missing" else (f"m16 hold-down\nvia {nh}" if st == "possibly_down"
-                                                     else f"metric {m}\nvia {nh}")
-            if desc != last_label:
-                ax_metric.annotate(
-                    desc, xy=(t, y_map(m, st)), xytext=(6, 10 if y_map(m, st) < 2.5 else -26),
-                    textcoords="offset points", fontsize=8, fontweight="bold",
-                    bbox={"boxstyle": "round,pad=0.22", "facecolor": "#f8fafc", "edgecolor": "#94a3b8"},
-                )
-                last_label = desc
+            ax.scatter(t, y, s=48, color=SERIES, edgecolor="white", linewidth=1.4, zorder=4)
+            if y > 0 and nh not in ("", "-"):
+                ax.text(t + span * 0.008, y + 0.12, f"via {nh}", ha="left", va="bottom",
+                        fontsize=8.5, color=INK_2, zorder=5,
+                        bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.2})
+            last = key
 
-    # Shade SSH session gaps and vertical lines for mark & converged
-    down_t = None
-    for r in rows:
-        ev, t = r.get("event"), r["_t"]
-        if ev == "mark":
-            ax_metric.axvline(t, color="#dc2626", linestyle="--", linewidth=1.5, label=f"Operator mark ({t:.1f}s)")
-            ax_poll.axvline(t, color="#dc2626", linestyle="--", linewidth=1.2)
-        elif ev == "converged":
-            ax_metric.axvline(t, color="#15803d", linestyle="-.", linewidth=1.6, label=f"Converged ({t:.1f}s)")
-            ax_poll.axvline(t, color="#15803d", linestyle="-.", linewidth=1.2)
-        elif ev == "session_lost":
-            down_t = t
-        elif ev == "session_restored" and down_t is not None:
-            ax_metric.axvspan(down_t, t, color="#fecaca", alpha=0.45, label=f"SSH session gap ({t - down_t:.1f}s)")
-            ax_poll.axvspan(down_t, t, color="#fecaca", alpha=0.45)
-            down_t = None
+    mark_t = next((r["_t"] for r in rows if r.get("event") == "mark"), None)
+    conv_t = next((r["_t"] for r in rows if r.get("event") == "converged"), None)
+    if mark_t is not None:
+        ax.axvline(mark_t, color=INK_2, linestyle=(0, (4, 3)), linewidth=1.1, zorder=2)
+        ax.text(mark_t, 1.01, "change applied", transform=trans, ha="right", va="bottom",
+                fontsize=8.5, color=INK_2)
+    if conv_t is not None:
+        ax.axvline(conv_t, color=INK, linewidth=1.1, zorder=2)
+        ax.text(conv_t, 1.01, "new route seen", transform=trans, ha="left", va="bottom",
+                fontsize=8.5, color=INK)
+    if mark_t is not None and conv_t is not None and conv_t > mark_t:
+        hi = conv_t - mark_t
+        # If the monitor was blind just before it saw the new route, the switch happened
+        # somewhere inside that blind span: report the range, not a false-precise number.
+        blind = next((s for s, e in gaps if abs(e - conv_t) <= 1.5 and s < conv_t), None)
+        lo = max(0.0, blind - mark_t) if blind is not None else None
+        text = f"{lo:.1f}–{hi:.1f} s" if lo is not None else f"{hi:.1f} s"
+        ax.annotate("", xy=(conv_t, 3.82), xytext=(mark_t, 3.82),
+                    arrowprops={"arrowstyle": "<->", "color": INK, "linewidth": 1.0,
+                                "shrinkA": 0, "shrinkB": 0})
+        # Centre the figures over a wide bracket; beside the convergence line when narrow
+        x_lo, x_hi = ax.get_xlim()
+        if (conv_t - mark_t) / (x_hi - x_lo) > 0.35:
+            tx, ha = (mark_t + conv_t) / 2, "center"
+        else:
+            tx, ha = conv_t + (x_hi - x_lo) * 0.012, "left"
+        box = {"facecolor": "white", "edgecolor": "none", "pad": 1.0}
+        ax.text(tx, 3.88, f"monitor: {text}", ha=ha, va="bottom", fontsize=10,
+                fontweight="bold", color=INK, bbox=box, zorder=6)
+        if debug_s is not None:
+            # The debug figure starts at a different moment than the operator's mark
+            start = ("from the last update heard" if label.startswith("T5")
+                     else "from link up to new route" if label.startswith("T4")
+                     else "from route removal to new route")
+            ax.text(tx, 3.76, f"router debug log: {debug_s:.1f} s ({start})", ha=ha, va="top",
+                    fontsize=8.5, color=INK_2, bbox=box, zorder=6)
 
-    ax_metric.set_yticks([0.0, 1.0, 2.0, 3.2])
-    ax_metric.set_yticklabels(["Missing\n(flushed)", "Metric 1\n(direct)", "Metric 2\n(alternate)", "Metric 16\n(possibly down)"])
-    ax_metric.set_ylim(-0.45, 3.85)
-    ax_metric.set_ylabel("Observed Route State", fontsize=10)
-    ax_metric.grid(True, linestyle="--", alpha=0.4)
-    handles, _ = ax_metric.get_legend_handles_labels()
-    if handles:
-        ax_metric.legend(loc="upper right", fontsize=8, framealpha=0.92)
+    ax.set_yticks([y for y, _ in STATE_ROWS])
+    ax.set_yticklabels([name for _, name in STATE_ROWS], fontsize=8.5)
+    ax.set_ylim(-0.45, 4.35)
+    ax.set_xlabel("Time since monitoring started (s)", fontsize=9.5, color=INK_2)
 
-    # Bottom panel: actual polling interval / command duration
-    if polls:
-        pt = [p["_t"] for p in polls]
-        iv = [_float(p.get("interval_s")) or _float(p.get("duration_s")) or 0.0 for p in polls]
-        dur = [_float(p.get("duration_s")) or 0.0 for p in polls]
-        ax_poll.plot(pt, iv, color="#475569", marker=".", linewidth=1.1, label="Actual poll interval (s)")
-        ax_poll.plot(pt, dur, color="#0f766e", linewidth=1.0, alpha=0.85, label="SSH command duration (s)")
-        ax_poll.axhline(1.0, color="#94a3b8", linestyle=":", linewidth=1.0, label="Target interval (1.0 s)")
-        ax_poll.legend(loc="upper right", fontsize=7.5)
-    else:
-        et = [r["_t"] for r in rows]
-        ax_poll.scatter(et, [1.0] * len(et), color="#475569", s=18, label="Logged events")
-        ax_poll.legend(loc="upper right", fontsize=7.5)
-
-    ax_poll.set_xlabel("Elapsed observation time on laptop clock (seconds)", fontsize=10)
-    ax_poll.set_ylabel("Poll timing (s)", fontsize=9.5)
-    ax_poll.grid(True, linestyle="--", alpha=0.4)
-
-    tag = " [SIMULATED SAMPLE DATA]" if sim else ""
-    fig.suptitle(f"Route-Change Timeline: {label} on {router} (watching {target}){tag}",
-                 fontsize=11.5, fontweight="bold", y=0.94 if sim else 0.97)
+    test, _, run = label.partition("-run")
+    nice = f"{test} run {run}" if run else label
+    _titles(fig, f"{nice}: {router}'s route to {target}",
+            "Polled about once a second over SSH. Monitor time runs from the operator's mark to the "
+            "first poll showing the new route; dotted = router not visible.", sim)
     if sim:
         _stamp_simulated(fig)
 
-    fig.tight_layout(rect=(0, 0, 1, 0.90 if sim else 0.93))
+    fig.subplots_adjust(left=0.12, right=0.985, top=0.79 if sim else 0.81, bottom=0.12)
     if out_path is None:
         prefix = "SIMULATED_" if sim else ""
         out_path = CHARTS_DIR / f"{prefix}timeline_{label}_{router}.png"
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=180)
+    fig.savefig(out_path, dpi=200, facecolor="white")
     plt.close(fig)
     return out_path
 
@@ -436,7 +513,11 @@ def generate_all_charts(results_path=DATA_DIR / "results.csv",
         c_sim = is_simulated_rows(c_rows, force=sim)
         c_prefix = "SIMULATED_" if c_sim else ""
         out = charts_dir / f"{c_prefix}timeline_{csv_path.stem}.png"
-        saved.append(plot_route_timeline(csv_path, out, simulated=c_sim))
+        test, _, rest = csv_path.stem.partition("-run")
+        run = rest.split("_")[0]
+        debug_s = next((_float(r.get("debug_convergence_s")) for r in rows
+                        if r.get("test") == test and str(r.get("run")) == run), None)
+        saved.append(plot_route_timeline(csv_path, out, simulated=c_sim, debug_s=debug_s))
     return saved
 
 
