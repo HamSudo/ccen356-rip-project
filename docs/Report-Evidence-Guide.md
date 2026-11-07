@@ -14,7 +14,7 @@ Put **one representative example of each kind of evidence** in the report and ke
 
 The progress report needs only enough to show the network works and the tests produced results. Point to the final report and the repository for the rest.
 
-1. **Topology diagram** of the all-Ethernet design (3 routers, 3 switches, VLANs 12/13/23 as the WAN links). To be drawn from [`Design-Change-All-Ethernet.md`](Design-Change-All-Ethernet.md).
+1. **Topology diagram** of the all-Ethernet design (3 routers, 3 switches, VLANs 12/13/23 as the WAN links). `topology/topology.png`.
 2. **One baseline routing table:** `data/verification/screenshots/LIB-R1_show-commands.png` (`show ip route rip` with both remote LANs at [120/1]).
 3. **The results table** (last section of this file), as a table, not an image.
 4. **The convergence comparison chart:** `data/charts/convergence_comparison.png`.
@@ -25,8 +25,8 @@ Each figure earns its place by showing something no other figure shows.
 
 | Section | Figure | File | Why this one |
 |---|---|---|---|
-| 2 Network design | Topology diagram | to draw (see the design-change doc) | Shows the triangle and the VLAN trick at a glance |
-| 2 Network design | One rack/cabling photo | team phone, then `topology/` | Proves the physical build |
+| 2 Network design | Topology diagram | `topology/topology.png` | Shows the triangle and the VLAN trick at a glance |
+| 2 Network design | One rack/cabling photo | `topology/photos/routers_rear_and_switches.jpg` | Proves the physical build |
 | 4 Verification | `show ip route rip` + `show ip protocols`, LIB-R1 | `data/verification/screenshots/LIB-R1_show-commands.png` | Baseline routes and RIP timers (30/180/180/240); give TCH-R2 and LAB-R3 as a small table instead |
 | 4 Verification | SW-LIB VLANs, trunk and CDP neighbours | `data/verification/screenshots/SW-LIB_show-commands.png` | Proves the VLAN design and the cross-room cabling |
 | 6a Results | Results table | `data/results.csv` | The main result, as a table |

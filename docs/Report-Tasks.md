@@ -10,13 +10,7 @@ The demo is planned separately and is not covered here.
 
 ## Saif: topology diagram, sections 2–4, Appendix A (configs)
 
-1. **Topology diagram:** to be drawn from `docs/Design-Change-All-Ethernet.md` and saved as `topology/topology.png`.
-   - The triangle of 3 routers and 3 switches is to be shown.
-   - LAN VLANs 10, 20 and 30 are to be shown.
-   - The WAN links on VLANs 12, 13 and 23 are to be labelled with their /30 subnets.
-   - Router ports are to be marked: G0/0 trunk, G0/1.
-   - Switch ports are to be marked: Fa0/7 trunk, Fa0/8 WAN access, Fa0/1–6 LAN.
-   - `school-rip.pkt` is to be updated the same way only if it is still to be submitted.
+1. **Topology diagram:** done, saved as `topology/topology.png`. One fix remains: the legend is to list the WAN line colours per link (orange VLAN 12, purple VLAN 13, teal VLAN 23), not orange only. `school-rip.pkt` is to be updated only if it is still to be submitted.
 2. **Section 2, Network design:**
    - The diagram is to be included.
    - An IP plan table is to be included: LANs, WAN /30s, gateways .1, switch management .2.

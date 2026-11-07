@@ -42,7 +42,7 @@ data/console_logs/   PuTTY console session logs
 data/results.csv     results table, one row per run
 data/charts/         charts for the report
 docs/                design docs, lab day test plan, report section drafts, evidence guide, report tasks
-topology/            topology diagram (to add) and rack/cabling photos
+topology/            topology diagram (topology.png) and rack/cabling photos
 ```
 
 ## Scripts
